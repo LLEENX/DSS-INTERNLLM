@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends Authenticatable
 {
@@ -32,6 +33,12 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    // Relasi 1-to-1 ke Pelamar
+    public function pelamar(): HasOne
+    {
+        return $this->hasOne(Pelamar::class);
+    }
 
     /**
      * Get the attributes that should be cast.
