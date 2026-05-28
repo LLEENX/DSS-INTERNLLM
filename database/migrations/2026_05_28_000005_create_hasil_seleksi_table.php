@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('hasil_seleksi', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('pelamar_id')->constrained()->onDelete('cascade');
+            $table->foreignId('pelamar_id')->constrained('pelamar')->onDelete('cascade');
             $table->float('nilai_preferensi_v');
             $table->integer('rangking');
             $table->string('status');

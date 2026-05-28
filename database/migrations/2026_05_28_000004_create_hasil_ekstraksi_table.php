@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('hasil_ekstraksi', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('pelamar_id')->constrained()->onDelete('cascade');
+            $table->foreignId('pelamar_id')->constrained('pelamar')->onDelete('cascade');
             $table->text('teks_mentah')->nullable();
             $table->json('raw_entitas_ner')->nullable();
             $table->float('skor_jurusan')->default(0);
             $table->integer('jumlah_skill')->default(0);
             $table->float('skor_proposal')->default(0);
-            $table->string('status_proses', ['tertunda', 'memproses', 'berhasil', 'gagal'])->default('tertunda');
+            $table->enum('status_proses', ['tertunda', 'memproses', 'berhasil', 'gagal'])->default('tertunda');
             $table->timestamps();
         });
     }
