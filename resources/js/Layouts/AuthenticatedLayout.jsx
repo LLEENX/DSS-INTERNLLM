@@ -8,12 +8,14 @@ export default function AuthenticatedLayout({ header, children }) {
 
     const routeHome = user.role === 'admin' ? route('admin.dashboard') : route('pelamar.dashboard');
     const isHomeActive = route().current('admin.dashboard') || route().current('pelamar.dashboard');
+    const isDataPelamarActive = route().current('admin.data-pelamar');
+    const isHasilSeleksiActive = route().current('admin.hasil-seleksi');
 
     return (
         <div className="flex h-screen bg-[#f8f9fa] font-sans overflow-hidden">
             
             {/* SIDEBAR (Light Corporate Theme) */}
-            <aside className="w-64 bg-white border-r border-gray-200 flex flex-col justify-between z-20 hidden md:flex">
+            <aside className="w-60 bg-white border-r border-gray-200 flex flex-col justify-between z-20 hidden md:flex">
                 <div>
                     {/* Brand Logo */}
                     <div className="h-16 flex items-center px-6 border-b border-gray-100">
@@ -104,7 +106,7 @@ export default function AuthenticatedLayout({ header, children }) {
                     </div>
                 </header>
 
-                <main className="flex-1 overflow-y-auto bg-[#f8f9fa] p-6 md:p-8">
+                <main className="flex-1 overflow-y-auto bg-[#f8f9fa] p-6 md:p-top-4 md:p-bottom-4">
                     {children}
                 </main>
             </div>
