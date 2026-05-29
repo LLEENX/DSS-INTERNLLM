@@ -7,7 +7,7 @@ import { Head, Link, useForm } from '@inertiajs/react';
 
 export default function Register() {
     const { data, setData, post, processing, errors, reset } = useForm({
-        name: '',
+        username: '',
         email: '',
         password: '',
         password_confirmation: '',
@@ -27,20 +27,20 @@ export default function Register() {
 
             <form onSubmit={submit}>
                 <div>
-                    <InputLabel htmlFor="name" value="Name" />
+                    <InputLabel htmlFor="username" value="Username" />
 
                     <TextInput
-                        id="name"
-                        name="name"
-                        value={data.name}
+                        id="username"
+                        name="username"
+                        value={data.username}
                         className="mt-1 block w-full"
-                        autoComplete="name"
+                        autoComplete="username"
                         isFocused={true}
-                        onChange={(e) => setData('name', e.target.value)}
+                        onChange={(e) => setData('username', e.target.value)}
                         required
                     />
 
-                    <InputError message={errors.name} className="mt-2" />
+                    <InputError message={errors.username} className="mt-2" />
                 </div>
 
                 <div className="mt-4">
@@ -107,7 +107,7 @@ export default function Register() {
                         href={route('login')}
                         className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                     >
-                        Already registered?
+                        Sudah punya akun?
                     </Link>
 
                     <PrimaryButton className="ms-4" disabled={processing}>

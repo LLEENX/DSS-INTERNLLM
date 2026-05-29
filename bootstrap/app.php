@@ -3,6 +3,8 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -15,6 +17,13 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
         ]);
+
+        $middleware->redirectUsersTo(function (Request $request) {
+            if (Auth::check() && Auth::user()->role === 'admin') {
+                return route('admin.dashboard');
+            }
+            return route('pelamar.dashboard');
+        });
 
         //
     })
