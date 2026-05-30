@@ -1,4 +1,4 @@
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import DashboardAdminLayout from '@/Layouts/DashboardAdminLayout';
 import { Head } from '@inertiajs/react';
 
 export default function DashboardAdmin({ statistik, topRankings }) {
@@ -6,7 +6,7 @@ export default function DashboardAdmin({ statistik, topRankings }) {
     const tahun = new Date().getFullYear();
 
     return (
-        <AuthenticatedLayout>
+        <DashboardAdminLayout>
             <Head title="Dashboard Admin" />
             <div className="max-w-7xl mx-auto mt-2 mb-6 space-y-6">
                 
@@ -121,6 +121,6 @@ export default function DashboardAdmin({ statistik, topRankings }) {
                     </div>
                 </div>
             </div>
-        </AuthenticatedLayout>
+        </DashboardAdminLayout>
     );
 }

@@ -7,11 +7,9 @@ use App\Http\Controllers\AdminController;
 
 Route::get('/', function () {
     if (Auth::check()) {
-        // Jika admin, lempar ke dashboard admin
         if (Auth::user()->role === 'admin') {
             return redirect()->route('admin.dashboard');
         }
-        // Jika pelamar, lempar ke dashboard pelamar
         return redirect()->route('pelamar.dashboard');
     }
 
@@ -19,13 +17,6 @@ Route::get('/', function () {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    
-    // Wadah rute khusus Admin
-    // Route::prefix('admin')->group(function () {
-    //     Route::get('/dashboard', function () {
-    //         return Inertia::render('Admin/DashboardAdmin');
-    //     })->name('admin.dashboard');
-    // });
 
     Route::prefix('admin')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
@@ -39,4 +30,4 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
