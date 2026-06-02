@@ -20,6 +20,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::prefix('admin')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+        Route::get('/data-pelamar', [AdminController::class, 'dataPelamar'])->name('admin.data-pelamar');
     });
 
     Route::prefix('pelamar')->group(function () {
