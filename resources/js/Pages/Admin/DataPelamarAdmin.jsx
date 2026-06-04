@@ -41,7 +41,8 @@ export default function DataPelamar({ datapelamar }) {
                             <thead className="bg-white text-gray-400 text-[11px] font-black uppercase tracking-widest border-b border-gray-100">
                                 <tr>
                                     <th className="px-6 py-4 w-12 text-center">No</th>
-                                    <th className="px-6 py-4">Pelamar & Instansi</th>
+                                    <th className="px-6 py-4 text-center">Pelamar & Instansi</th>
+                                    <th className="px-6 py-4 text-center">Program Studi</th>
                                     <th className="px-6 py-4 text-center">IPK</th>
                                     <th className="px-6 py-4 text-center">Smt</th>
                                     <th className="px-6 py-4 text-center">Dokumen Validasi</th>
@@ -63,6 +64,10 @@ export default function DataPelamar({ datapelamar }) {
                                             <td className="px-6 py-4">
                                                 <div className="font-bold text-gray-800">{item.nama_lengkap}</div>
                                                 <div className="text-gray-500 text-xs font-medium">{item.asal_universitas}</div>
+                                            </td>
+
+                                            <td className="px-6 py-4 text-center font-bold text-gray-700">
+                                                <div className="font-bold text-gray-800">{item.jenjang} {item.prodi}</div>
                                             </td>
                                             
                                             <td className="px-6 py-4 text-center font-bold text-gray-700">

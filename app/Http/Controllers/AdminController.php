@@ -91,5 +91,21 @@ class AdminController extends Controller
         ]);
     }
 
+    public function updatePelamar(Request $request, $id)
+    {
+        // Update data di database
+        DB::table('pelamar')->where('id', $id)->update([
+            'nama_lengkap' => $request->nama_lengkap,
+            'asal_universitas' => $request->asal_universitas,
+            'prodi' => $request->prodi,
+            'jenjang' => $request->jenjang,
+            'ipk' => $request->ipk,
+            'semester' => $request->semester,
+        ]);
+
+        // Kembalikan ke halaman yang sama (data akan otomatis diperbarui oleh Inertia)
+        return redirect()->back();
+    }
+
 
 }
