@@ -56,6 +56,8 @@ class AdminController extends Controller
                 'pelamar.jurusan',
                 'pelamar.ipk',
                 'pelamar.semester',
+                'pelamar.path_cv',
+                'pelamar.path_proposal',
             )
             ->orderBy('pelamar.id', 'asc')
             ->get();
