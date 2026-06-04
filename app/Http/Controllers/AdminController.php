@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use Inertia\Support\Facades\Storage;
 
 class AdminController extends Controller
 {
@@ -82,30 +83,33 @@ class AdminController extends Controller
         return redirect()->back();
     }
 
-    public function editPelamar($id)
+    public function editPelamar(Request $request, $id)
     {
-        $pelamar = DB::table('pelamar')->where('id', $id)->first();
-
-        return Inertia::render('Admin/EditPelamar', [
-            'pelamar' => $pelamar
-        ]);
-    }
-
-    public function updatePelamar(Request $request, $id)
-    {
-        // Update data di database
-        DB::table('pelamar')->where('id', $id)->update([
+        $updateData = [
             'nama_lengkap' => $request->nama_lengkap,
             'asal_universitas' => $request->asal_universitas,
-            'prodi' => $request->prodi,
-            'jenjang' => $request->jenjang,
             'ipk' => $request->ipk,
             'semester' => $request->semester,
-        ]);
+        ];
 
-        // Kembalikan ke halaman yang sama (data akan otomatis diperbarui oleh Inertia)
+        // Cek mengunggah file CV baru
+        if ($request->hasFile('path_cv')) {
+            // Simpan file fisik ke folder storage/app/public/berkas_cv
+            $pathCV = $request->file('path_cv')->store('berkas_cv', 'public');
+            
+            // Masukkan nama jalur/string-nya ke dalam array update
+            $updateData['path_cv'] = $pathCV;
+        }
+
+        // Cek mengunggah file Proposal baru
+        if ($request->hasFile('path_proposal')) {
+            $pathProposal = $request->file('path_proposal')->store('berkas_proposal', 'public');
+            $updateData['path_proposal'] = $pathProposal;
+        }
+
+        DB::table('pelamar')->where('id', $id)->update($updateData);
+
         return redirect()->back();
     }
-
 
 }

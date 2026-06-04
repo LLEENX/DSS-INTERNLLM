@@ -1,7 +1,55 @@
 import DashboardAdminLayout from '@/Layouts/DashboardAdminLayout';
 import { Head, Link } from '@inertiajs/react';
+import { useState } from 'react';
+import { useForm, router } from '@inertiajs/react';
 
 export default function DataPelamar({ datapelamar }) {
+
+
+    // ====== FUNGSI UNTUK MENGEDIT DATA PELAMAR ======
+    
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [editId, setEditId] = useState(null);
+
+    // Form dari Inertia
+    const { data, setData, put, processing, reset } = useForm({
+        nama_lengkap: '',
+        asal_universitas: '',
+        ipk: '',
+        semester: '',
+        path_cv: null,
+        path_proposal: null,
+        _method: 'PUT', // Untuk mengirim data sebagai PUT
+    });
+
+    // FUNGSI MEMBUKA MODAL EDIT
+    const openEditModal = (pelamar) => {
+        setEditId(pelamar.id);
+        setData({
+            nama_lengkap: pelamar.nama_lengkap || '',
+            asal_universitas: pelamar.asal_universitas || '',
+            ipk: pelamar.ipk || '',
+            semester: pelamar.semester || '',
+        });
+        setIsEditModalOpen(true);
+    };
+
+    // FUNGSI MENUTUP MODAL EDIT
+    const closeEditModal = () => {
+        setIsEditModalOpen(false);
+        reset(); // Kosongkan form kembali
+    };
+
+    // FUNGSI MENYIMPAN HASIL EDIT
+    const submitEdit = (e) => {
+        e.preventDefault();
+        // Memakai post() dipadukan dengan _method: 'put' di dalam data
+        post(route('admin.data-pelamar.update', editId), {
+            onSuccess: () => closeEditModal(), // Tutup modal jika berhasil
+        });
+    };
+
+    // ====== FUNGSI HAPUS DATA PELAMAR ======
 
     const handleDelete = (id, nama) => {
         if (confirm(`Apakah Anda yakin ingin menghapus pelamar "${nama}"? Data yang dihapus tidak dapat dikembalikan.`)) {
@@ -115,18 +163,14 @@ export default function DataPelamar({ datapelamar }) {
                                             <td className="px-6 py-4 text-center">
                                                 <div className="flex justify-center items-center gap-2">
                                                     
-                                                    {/* Tombol Edit (Akan mengarahkan ke halaman Form Edit) */}
-                                                    <Link 
-                                                        href={route('admin.data-pelamar.edit', item.id)} 
-                                                        className="p-2 bg-white text-blue-600 rounded-lg border border-gray-200 hover:bg-blue-50 hover:border-blue-300 transition-colors shadow-sm" 
-                                                        title="Edit Data"
-                                                    >
+                                                    {/* Tombol Edit */}
+                                                    <button onClick={() => openEditModal(item)} type="button" className="p-2 bg-white text-blue-600 rounded-lg border border-gray-200 hover:bg-blue-50 hover:border-blue-300 transition-colors shadow-sm" title="Edit Data">
                                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                                         </svg>
-                                                    </Link>
+                                                    </button>
 
-                                                    {/* Tombol Hapus (Akan memicu fungsi handleDelete di atas) */}
+                                                    {/* Tombol Hapus */}
                                                     <button 
                                                         onClick={() => handleDelete(item.id, item.nama_lengkap)}
                                                         type="button" 
@@ -137,7 +181,6 @@ export default function DataPelamar({ datapelamar }) {
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                         </svg>
                                                     </button>
-                                                    
                                                 </div>
                                             </td>
                                         </tr>
@@ -148,6 +191,102 @@ export default function DataPelamar({ datapelamar }) {
                     </div>
                 </div>
             </div>
+
+
+            {/* MODAL FORM EDIT */}
+            {isEditModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+                        
+                        {/* Header Modal */}
+                        <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+                            <h3 className="text-lg font-bold text-gray-800">Edit Data Pelamar</h3>
+                            <button onClick={closeEditModal} className="text-gray-400 hover:text-red-500 transition-colors">
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        {/* Body Modal (Form) */}
+                        <form onSubmit={submitEdit}>
+                            <div className="p-6 space-y-4">
+                                <div>
+                                    <label className="block text-sm font-bold text-gray-700 mb-1">Nama Lengkap</label>
+                                    <input 
+                                        type="text" 
+                                        value={data.nama_lengkap} 
+                                        onChange={e => setData('nama_lengkap', e.target.value)} 
+                                        className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                        required 
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-bold text-gray-700 mb-1">Asal Universitas</label>
+                                    <input 
+                                        type="text" 
+                                        value={data.asal_universitas} 
+                                        onChange={e => setData('asal_universitas', e.target.value)} 
+                                        className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                        required 
+                                    />
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-bold text-gray-700 mb-1">IPK</label>
+                                        <input 
+                                            type="number" step="0.01" max="4.00" 
+                                            value={data.ipk} 
+                                            onChange={e => setData('ipk', e.target.value)} 
+                                            className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-bold text-gray-700 mb-1">Semester</label>
+                                        <input 
+                                            type="number" max="14" 
+                                            value={data.semester} 
+                                            onChange={e => setData('semester', e.target.value)} 
+                                            className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                        />
+                                    </div>
+                                        <div>
+                                            <label className="block text-sm font-bold text-gray-700 mb-1">Update CV (PDF)</label>
+                                            <input 
+                                                type="file" 
+                                                accept=".pdf" // Hanya menerima file PDF
+                                                onChange={e => setData('file_cv', e.target.files[0])} // Menangkap file, bukan text
+                                                className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+                                            />
+                                            <p className="text-[10px] text-gray-400 mt-1">*Kosongkan jika tidak ingin mengubah CV.</p>
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-bold text-gray-700 mb-1">Update Proposal (PDF)</label>
+                                            <input 
+                                                type="file" 
+                                                accept=".pdf" 
+                                                onChange={e => setData('file_proposal', e.target.files[0])} 
+                                                className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100"
+                                            />
+                                            <p className="text-[10px] text-gray-400 mt-1">*Kosongkan jika tidak ingin mengubah Proposal.</p>
+                                        </div>
+                                </div>
+                            </div>
+
+                            {/* Footer Modal (Tombol Submit) */}
+                            <div className="px-6 py-4 bg-gray-50 flex justify-end gap-2 border-t border-gray-100">
+                                <button type="button" onClick={closeEditModal} className="px-4 py-2 text-sm font-bold text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                                    Batal
+                                </button>
+                                <button type="submit" disabled={processing} className="px-4 py-2 text-sm font-bold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50">
+                                    {processing ? 'Menyimpan...' : 'Simpan Perubahan'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
         </DashboardAdminLayout>
     );
 }
