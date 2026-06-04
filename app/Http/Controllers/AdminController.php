@@ -44,4 +44,26 @@ class AdminController extends Controller
             'topRankings' => $topRankings
         ]);
     }
+
+    public function dataPelamar()
+    {
+        $dataPelamar = DB::table('pelamar')
+            ->leftjoin('users', 'pelamar.user_id', '=', 'users.id')
+            ->select(
+                'pelamar.id',
+                'pelamar.nama_lengkap',
+                'pelamar.asal_universitas',
+                'pelamar.jurusan',
+                'pelamar.ipk',
+                'pelamar.semester',
+            )
+            ->orderBy('pelamar.id', 'asc')
+            ->get();
+
+        return Inertia::render('Admin/DataPelamar', [
+            'datapelamar' => $dataPelamar
+        ]);
+    }
+
+
 }
