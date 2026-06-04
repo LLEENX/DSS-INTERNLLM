@@ -53,7 +53,8 @@ class AdminController extends Controller
                 'pelamar.id',
                 'pelamar.nama_lengkap',
                 'pelamar.asal_universitas',
-                'pelamar.jurusan',
+                'pelamar.prodi',
+                'pelamar.jenjang',
                 'pelamar.ipk',
                 'pelamar.semester',
                 'pelamar.path_cv',
@@ -62,8 +63,31 @@ class AdminController extends Controller
             ->orderBy('pelamar.id', 'asc')
             ->get();
 
-        return Inertia::render('Admin/DataPelamar', [
+        return Inertia::render('Admin/DataPelamarAdmin', [
             'datapelamar' => $dataPelamar
+        ]);
+    }
+
+
+    // Fungsi untuk memproses penghapusan
+    public function destroyPelamar($id)
+    {
+        // Cari data pelamar berdasarkan ID lalu hapus
+        DB::table('pelamar')->where('id', $id)->delete();
+        
+        // menghapus data user
+        $pelamar = DB::table('pelamar')->where('id', $id)->first();
+        DB::table('users')->where('id', $pelamar->user_id)->delete();
+
+        return redirect()->back();
+    }
+
+    public function editPelamar($id)
+    {
+        $pelamar = DB::table('pelamar')->where('id', $id)->first();
+
+        return Inertia::render('Admin/EditPelamar', [
+            'pelamar' => $pelamar
         ]);
     }
 
