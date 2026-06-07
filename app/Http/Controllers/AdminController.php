@@ -109,10 +109,8 @@ class AdminController extends Controller
 
         // Cek mengunggah file CV baru
         if ($request->hasFile('path_cv')) {
-            // Simpan file fisik ke folder storage/app/public/berkas_cv
             $pathCV = $request->file('path_cv')->store('berkas_cv', 'public');
             
-            // Masukkan nama jalur/string-nya ke dalam array update
             $updateData['path_cv'] = $pathCV;
         }
 

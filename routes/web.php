@@ -20,10 +20,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::prefix('admin')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-        Route::get('/data-pelamar', [AdminController::class, 'dataPelamar'])->name('admin.data-pelamar');
 
+        // Route untuk data pelamar
+        Route::get('/data-pelamar', [AdminController::class, 'dataPelamar'])->name('admin.data-pelamar');
         Route::get('/data-pelamar/{id}/edit', [AdminController::class, 'editPelamar'])->name('admin.data-pelamar.edit');
-        Route::delete('/data-pelamar/{id}', [AdminController::class, 'destroyPelamar'])->name('admin.data-pelamar.destroy');                                
+        Route::put('/data-pelamar/{id}', [AdminController::class, 'updatePelamar'])->name('admin.data-pelamar.update');
+        Route::delete('/data-pelamar/{id}', [AdminController::class, 'destroyPelamar'])->name('admin.data-pelamar.destroy');
+        
+        // Route untuk Manajemen Kriteria
+        
     });
 
     Route::prefix('pelamar')->group(function () {
