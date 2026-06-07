@@ -28,7 +28,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/data-pelamar/{id}', [AdminController::class, 'destroyPelamar'])->name('admin.data-pelamar.destroy');
         
         // Route untuk Manajemen Kriteria
-        
+        Route::get('/manajemen-kriteria', function () {
+            return inertia('Admin/ManajemenKriteria');
+        })->name('admin.manajemen-kriteria');
     });
 
     Route::prefix('pelamar')->group(function () {

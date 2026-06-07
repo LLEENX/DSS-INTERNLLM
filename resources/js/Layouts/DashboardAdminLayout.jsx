@@ -34,7 +34,7 @@ export default function DashboardAdminLayout({ header, children }) {
         },
         {
             title: 'Manajemen Kriteria',
-            href: '#',
+            href: route('admin.manajemen-kriteria'),
             active: isActive('admin.manajemen-kriteria'),
             icon: (
                 <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
