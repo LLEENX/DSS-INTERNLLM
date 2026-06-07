@@ -35,14 +35,25 @@ class AdminController extends Controller
             ->limit(5)
             ->get();
 
-        // 5. Kirim data ke komponen React
+        // QUERY GRAFIK: Ambil data riwayat jumlah pendaftar per bulan
+        $riwayatPendaftar = DB::table('pelamar')
+            ->select(
+                DB::raw("DATE_FORMAT(created_at, '%b') as bulan"), 
+                DB::raw('COUNT(*) as jumlah')
+            )
+            ->groupBy(DB::raw("DATE_FORMAT(created_at, '%m')"), DB::raw("DATE_FORMAT(created_at, '%b')"))
+            ->orderBy(DB::raw("DATE_FORMAT(created_at, '%m')"), 'asc')
+            ->get();
+
+        // Kirim data ke komponen React
         return Inertia::render('Admin/DashboardAdmin', [
             'statistik' => [
                 'totalMasuk' => $totalMasuk,
                 'sudahDinilai' => $sudahDinilai,
                 'kuotaLulus' => $kuotaLulus,
             ],
-            'topRankings' => $topRankings
+            'topRankings' => $topRankings,
+            'riwayatPendaftar' => $riwayatPendaftar,
         ]);
     }
 
