@@ -54,6 +54,7 @@ class AdminController extends Controller
                 'pelamar.id',
                 'pelamar.nama_lengkap',
                 'pelamar.asal_universitas',
+                'pelamar.nim',
                 'pelamar.prodi',
                 'pelamar.jenjang',
                 'pelamar.ipk',
@@ -88,7 +89,10 @@ class AdminController extends Controller
         $updateData = [
             'nama_lengkap' => $request->nama_lengkap,
             'asal_universitas' => $request->asal_universitas,
+            'nim' => $request->nim,
             'ipk' => $request->ipk,
+            'jenjang' => $request->jenjang,
+            'prodi' => $request->prodi,
             'semester' => $request->semester,
         ];
 

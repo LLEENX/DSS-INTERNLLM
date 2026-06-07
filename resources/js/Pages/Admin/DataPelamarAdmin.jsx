@@ -15,8 +15,11 @@ export default function DataPelamar({ datapelamar }) {
     const { data, setData, put, processing, reset } = useForm({
         nama_lengkap: '',
         asal_universitas: '',
+        nim: '',
         ipk: '',
         semester: '',
+        jenjang: '',
+        prodi: '',
         path_cv: null,
         path_proposal: null,
         _method: 'PUT', // Untuk mengirim data sebagai PUT
@@ -28,7 +31,10 @@ export default function DataPelamar({ datapelamar }) {
         setData({
             nama_lengkap: pelamar.nama_lengkap || '',
             asal_universitas: pelamar.asal_universitas || '',
+            nim: pelamar.nim || '',
             ipk: pelamar.ipk || '',
+            jenjang: pelamar.jenjang || '',
+            prodi: pelamar.prodi || '',
             semester: pelamar.semester || '',
         });
         setIsEditModalOpen(true);
@@ -210,16 +216,28 @@ export default function DataPelamar({ datapelamar }) {
 
                         {/* Body Modal (Form) */}
                         <form onSubmit={submitEdit}>
-                            <div className="p-6 space-y-4">
-                                <div>
-                                    <label className="block text-sm font-bold text-gray-700 mb-1">Nama Lengkap</label>
-                                    <input 
-                                        type="text" 
-                                        value={data.nama_lengkap} 
-                                        onChange={e => setData('nama_lengkap', e.target.value)} 
-                                        className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                                        required 
-                                    />
+                            <div className="px-6 space-y-4">
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-bold text-gray-700 mb-1">Nama Lengkap</label>
+                                        <input 
+                                            type="text" 
+                                            value={data.nama_lengkap} 
+                                            onChange={e => setData('nama_lengkap', e.target.value)} 
+                                            className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                            required 
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-bold text-gray-700 mb-1">NIM</label>
+                                        <input 
+                                            type="text" 
+                                            value={data.nim} 
+                                            onChange={e => setData('nim', e.target.value)} 
+                                            className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                            required 
+                                        />
+                                    </div>
                                 </div>
                                 <div>
                                     <label className="block text-sm font-bold text-gray-700 mb-1">Asal Universitas</label>
@@ -232,6 +250,27 @@ export default function DataPelamar({ datapelamar }) {
                                     />
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
+                                    {/* Kolom Nama Lengkap dan Jenjang */}
+                                    <div>
+                                        <label className="block text-sm font-bold text-gray-700 mb-1">Jenjang</label>
+                                        <input 
+                                            type="text"
+                                            value={data.jenjang} 
+                                            onChange={e => setData('jenjang', e.target.value)} 
+                                            className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                        />
+                                    </div>
+                                    {/* Kolom Asal Universitas dan Prodi */}
+                                    <div>
+                                        <label className="block text-sm font-bold text-gray-700 mb-1">Prodi</label>
+                                        <input 
+                                            type="text"
+                                            value={data.prodi} 
+                                            onChange={e => setData('prodi', e.target.value)} 
+                                            className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                        />
+                                    </div>
+                                    {/* Kolom IPK dan Semester */}
                                     <div>
                                         <label className="block text-sm font-bold text-gray-700 mb-1">IPK</label>
                                         <input 
@@ -244,7 +283,7 @@ export default function DataPelamar({ datapelamar }) {
                                     <div>
                                         <label className="block text-sm font-bold text-gray-700 mb-1">Semester</label>
                                         <input 
-                                            type="number" max="14" 
+                                            type="number" max="8" 
                                             value={data.semester} 
                                             onChange={e => setData('semester', e.target.value)} 
                                             className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
