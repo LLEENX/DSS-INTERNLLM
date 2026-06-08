@@ -125,4 +125,30 @@ class AdminController extends Controller
         return redirect()->back();
     }
 
+
+    // Fungsi untuk menampilkan halaman Manajemen Kriteria
+    public function manajemenKriteria()
+    {
+        // Ambil data kriteria dari database
+        $kriteria = DB::table('kriteria')->orderBy('id', 'asc')->get();
+
+        return Inertia::render('Admin/ManajemenKriteria', [
+            'kriteriaData' => $kriteria
+        ]);
+    }
+
+    // Fungsi untuk menyimpan perubahan masal (Array) dari Modal
+    public function updateKriteria(Request $request)
+    {
+        foreach ($request->items as $item) {
+            DB::table('kriteria')->where('id', $item['id'])->update([
+                'nama_kriteria' => $item['nama_kriteria'],
+                'bobot_ahp' => $item['bobot_ahp'],
+                'tipe' => $item['tipe'],
+            ]);
+        }
+
+        return redirect()->back();
+    }
+
 }
