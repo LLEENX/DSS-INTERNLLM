@@ -81,8 +81,8 @@ export default function DashboardAdminLayout({ header, children }) {
             {/* MAIN CONTENT AREA */}
             <div className="flex-1 flex flex-col h-screen overflow-hidden">
                 
-                {/* TOP NAVIGATION BAR (For User Profile) */}
-                <header className="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-6 z-10">
+                {/* TOP NAVIGATION BAR */}
+                <header className="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-6 z-10 shrink-0">
                     
                     {/* Hamburger Mobile */}
                     <div className="md:hidden">
@@ -121,7 +121,7 @@ export default function DashboardAdminLayout({ header, children }) {
                     </div>
                 </header>
 
-                <main className="flex-1 overflow-y-auto bg-[#f8f9fa] p-6 md:py-6">
+                <main className="flex-1 overflow-y-auto bg-[#f8f9fa] px-4 py-2 md:px-6 md:py-3">
                     {children}
                 </main>
             </div>
