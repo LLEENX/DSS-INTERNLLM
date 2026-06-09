@@ -39,6 +39,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         })->name('pelamar.dashboard');
     });
 
+    // Route untuk penilaian
+    Route::get('/penilaian', [AdminController::class, 'penilaian'])->name('admin.penilaian');
+    Route::post('/penilaian/proses-nlp', [AdminController::class, 'prosesNLP'])->name('admin.proses-nlp');
+
 });
 
 require __DIR__ . '/auth.php';

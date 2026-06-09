@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Support\Facades\Storage;
+use Illuminate\Support\Facades\Http;
 
 class AdminController extends Controller
 {
@@ -187,7 +188,6 @@ class AdminController extends Controller
 
         try {
             // Kirim File ke FastAPI
-            // Contoh: http://127.0.0.1:8001/predict
             $response = Http::attach(
                 'file', file_get_contents($filePath), basename($filePath)
             )->post('http://127.0.0.1:8001/predict-' . $type, [
@@ -197,7 +197,7 @@ class AdminController extends Controller
             if ($response->successful()) {
                 $result = $response->json();
                 
-                // 3. Simpan/Update ke tabel hasil_ekstraksi sesuai ERD
+                // Simpan/Update ke tabel hasil_ekstraksi sesuai ERD
                 DB::table('hasil_ekstraksi')->updateOrInsert(
                     ['pelamar_id' => $pelamarId],
                     [
