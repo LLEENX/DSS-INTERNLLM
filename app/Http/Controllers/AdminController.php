@@ -151,4 +151,68 @@ class AdminController extends Controller
         return redirect()->back();
     }
 
+    public function penilaian()
+    {
+        // Join pelamar dengan hasil_ekstraksi
+        $datapelamar = DB::table('pelamar')
+            ->leftJoin('hasil_ekstraksi', 'pelamar.id', '=', 'hasil_ekstraksi.pelamar_id')
+            ->select(
+                'pelamar.id',
+                'pelamar.nama_lengkap',
+                'pelamar.ipk',
+                'pelamar.semester',
+                'pelamar.file_cv',
+                'pelamar.file_proposal',
+                'hasil_ekstraksi.skor_jurusan_final as c3',
+                'hasil_ekstraksi.jumlah_skill_init as c4',
+                'hasil_ekstraksi.skor_proposal_final as c5',
+                'hasil_ekstraksi.status_proses'
+            )
+            ->get();
+
+        return Inertia::render('Admin/Penilaian', [
+            'datapelamar' => $datapelamar
+        ]);
+    }
+
+// Fungsi Pemicu NLP
+    public function prosesNLP(Request $request)
+    {
+        $pelamarId = $request->id;
+        $type = $request->type; // 'cv' atau 'proposal'
+        
+        // Ambil data pelamar
+        $pelamar = DB::table('pelamar')->where('id', $pelamarId)->first();
+        $filePath = public_path('storage/' . ($type == 'cv' ? $pelamar->file_cv : $pelamar->file_proposal));
+
+        try {
+            // Kirim File ke FastAPI
+            // Contoh: http://127.0.0.1:8001/predict
+            $response = Http::attach(
+                'file', file_get_contents($filePath), basename($filePath)
+            )->post('http://127.0.0.1:8001/predict-' . $type, [
+                'pelamar_id' => $pelamarId
+            ]);
+
+            if ($response->successful()) {
+                $result = $response->json();
+                
+                // 3. Simpan/Update ke tabel hasil_ekstraksi sesuai ERD
+                DB::table('hasil_ekstraksi')->updateOrInsert(
+                    ['pelamar_id' => $pelamarId],
+                    [
+                        'skor_jurusan_final' => $result['skor_jurusan'] ?? DB::raw('skor_jurusan_final'),
+                        'jumlah_skill_init'  => $result['jumlah_skill'] ?? DB::raw('jumlah_skill_init'),
+                        'skor_proposal_final' => $result['skor_proposal'] ?? DB::raw('skor_proposal_final'),
+                        'status_proses'      => 'berhasil',
+                        'updated_at'         => now()
+                    ]
+                );
+                return redirect()->back()->with('success', 'Analisis AI Berhasil');
+            }
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal terhubung ke server AI');
+        }
+    }
+
 }

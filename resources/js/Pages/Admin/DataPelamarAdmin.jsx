@@ -8,14 +8,10 @@ export default function DataPelamar({ datapelamar }) {
     // ====== STATE UNTUK FITUR SEARCH, FILTER & SORTING ======
     const [searchTerm, setSearchTerm] = useState('');
     const [filterProdi, setFilterProdi] = useState('Semua');
-    
-    // State untuk Sorting 
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
 
-    // Mengambil daftar Program Studi
     const uniqueProdi = ['Semua', ...new Set(datapelamar.map(item => item.prodi).filter(Boolean))];
 
-    // Logika Filter & Search
     const filteredData = datapelamar.filter((item) => {
         const matchesSearch = 
             (item.nama_lengkap?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
@@ -24,14 +20,12 @@ export default function DataPelamar({ datapelamar }) {
         return matchesSearch && matchesFilter;
     });
 
-    // Logika Sorting
     const sortedData = [...filteredData].sort((a, b) => {
-        if (!sortConfig.key) return 0; // Jika belum ada yang diklik, biarkan urutan asli
+        if (!sortConfig.key) return 0;
 
         let aValue = a[sortConfig.key];
         let bValue = b[sortConfig.key];
 
-        // Normalisasi data null/undefined agar tidak error saat diurutkan
         if (aValue === null || aValue === undefined) aValue = '';
         if (bValue === null || bValue === undefined) bValue = '';
 
@@ -40,7 +34,6 @@ export default function DataPelamar({ datapelamar }) {
         return 0;
     });
 
-    // Fungsi mengubah state saat header diklik
     const handleSort = (key) => {
         let direction = 'asc';
         if (sortConfig.key === key && sortConfig.direction === 'asc') {
@@ -49,7 +42,6 @@ export default function DataPelamar({ datapelamar }) {
         setSortConfig({ key, direction });
     };
 
-    // Komponen visual untuk ikon panah sorting
     const SortIcon = ({ columnKey }) => {
         if (sortConfig.key !== columnKey) {
             return (
@@ -71,7 +63,6 @@ export default function DataPelamar({ datapelamar }) {
             </svg>
         );
     };
-
 
     // ====== FUNGSI UNTUK MENGEDIT DATA PELAMAR ======
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -116,8 +107,6 @@ export default function DataPelamar({ datapelamar }) {
         });
     };
 
-
-    // ====== FUNGSI HAPUS DATA PELAMAR ======
     const handleDelete = (id, nama) => {
         if (confirm(`Apakah Anda yakin ingin menghapus pelamar "${nama}"? Data yang dihapus tidak dapat dikembalikan.`)) {
             router.delete(route('admin.data-pelamar.destroy', id), {
@@ -129,27 +118,25 @@ export default function DataPelamar({ datapelamar }) {
     return (
         <DashboardAdminLayout>
             <Head title="Data Pelamar" />
-            
-            <div className="max-w-7xl mx-auto mt-2 mb-6 space-y-6">
+            <div className="max-w-7xl mx-auto h-full flex flex-col space-y-3">
                 
                 {/* HEADER TITLE */}
-                <div className="mb-5 flex justify-between items-end">
+                <div className="shrink-0 flex justify-between items-end mt-1">
                     <div>
-                        <h2 className="text-2xl font-extrabold text-gray-800 tracking-tight">Manajemen Data Pelamar</h2>
-                        <p className="text-sm font-medium text-gray-500 mt-1">
+                        <h2 className="text-xl font-extrabold text-gray-800 tracking-tight leading-none">Manajemen Data Pelamar</h2>
+                        <p className="text-xs font-medium text-gray-500 mt-1">
                             Verifikasi berkas dan validitas administratif kandidat.
                         </p>
                     </div>
                 </div>
 
-                {/* TABEL DATA MENTAH */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div className="flex-1 bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col min-h-0 overflow-hidden">
                     
-                    {/* BAGIAN HEADER TABEL DENGAN FILTER & SEARCH */}
-                    <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50 flex flex-col md:flex-row justify-between items-center gap-4">
+                    {/* BAGIAN SEARCH & FILTER */}
+                    <div className="px-4 py-3 border-b border-gray-100 bg-gray-50/50 flex flex-col md:flex-row justify-between items-center gap-4 shrink-0">
                         <div className="flex items-center gap-3">
                             <h4 className="text-sm font-bold text-gray-700 uppercase tracking-tight">Daftar Pendaftar Masuk</h4>
-                            <span className="bg-blue-50 text-blue-600 text-xs px-3 py-1 rounded-full font-bold border border-blue-100">
+                            <span className="bg-blue-50 text-blue-600 text-[10px] px-2.5 py-0.5 rounded-full font-bold border border-blue-100">
                                 Total: {sortedData.length} Data
                             </span>
                         </div>
@@ -159,7 +146,7 @@ export default function DataPelamar({ datapelamar }) {
                                 <select 
                                     value={filterProdi}
                                     onChange={(e) => setFilterProdi(e.target.value)}
-                                    className="appearance-none bg-white text-xs text-gray-600 border border-gray-200 rounded-md pl-3 pr-8 py-2 focus:border-blue-500 focus:ring-blue-500 shadow-sm cursor-pointer"
+                                    className="appearance-none bg-white text-xs text-gray-600 border border-gray-200 rounded pl-2.5 pr-7 py-1.5 focus:border-blue-500 focus:ring-blue-500 shadow-sm cursor-pointer"
                                 >
                                     {uniqueProdi.map((prodi, index) => (
                                         <option key={index} value={prodi}>
@@ -167,7 +154,7 @@ export default function DataPelamar({ datapelamar }) {
                                         </option>
                                     ))}
                                 </select>
-                                <svg className="w-3.5 h-3.5 text-gray-400 absolute right-2.5 top-2.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-3 h-3 text-gray-400 absolute right-2 top-2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
                                 </svg>
                             </div>
@@ -178,41 +165,41 @@ export default function DataPelamar({ datapelamar }) {
                                     placeholder="Cari nama atau instansi..." 
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="w-full bg-white text-xs text-gray-700 border border-gray-200 rounded-md pl-8 pr-3 py-2 focus:border-blue-500 focus:ring-blue-500 shadow-sm"
+                                    className="w-full bg-white text-xs text-gray-700 border border-gray-200 rounded pl-7 pr-3 py-1.5 focus:border-blue-500 focus:ring-blue-500 shadow-sm"
                                 />
-                                <svg className="w-4 h-4 text-gray-400 absolute left-2.5 top-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-3.5 h-3.5 text-gray-400 absolute left-2 top-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                 </svg>
                             </div>
                         </div>
                     </div>
                     
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-sm text-left">
-                            <thead className="bg-white text-gray-400 text-[11px] font-black uppercase tracking-widest border-b border-gray-100">
+                    <div className="overflow-y-auto flex-1 p-0 m-0">
+                        <table className="w-full text-left m-0">
+                            <thead className="bg-white text-gray-400 text-[10px] font-black uppercase tracking-widest sticky top-0 z-10 shadow-sm">
                                 <tr>
-                                    <th className="px-6 py-4 w-12 text-center cursor-pointer hover:bg-gray-50 group transition-colors" onClick={() => handleSort('id')}>
+                                    <th className="px-4 py-3 w-12 text-center cursor-pointer hover:bg-gray-50 group transition-colors" onClick={() => handleSort('id')}>
                                         <div className="flex items-center justify-center gap-1.5">No <SortIcon columnKey="id" /></div>
                                     </th>
-                                    <th className="px-6 py-4 text-center">Pelamar & Instansi</th>
-                                    <th className="px-6 py-4 text-center cursor-pointer hover:bg-gray-50 group transition-colors" onClick={() => handleSort('prodi')}>
+                                    <th className="px-4 py-3 text-center">Pelamar & Instansi</th>
+                                    <th className="px-4 py-3 text-center cursor-pointer hover:bg-gray-50 group transition-colors" onClick={() => handleSort('prodi')}>
                                         <div className="flex items-center justify-center gap-1.5">Program Studi <SortIcon columnKey="prodi" /></div>
                                     </th>
-                                    <th className="px-6 py-4 text-center cursor-pointer hover:bg-gray-50 group transition-colors" onClick={() => handleSort('ipk')}>
+                                    <th className="px-4 py-3 text-center cursor-pointer hover:bg-gray-50 group transition-colors" onClick={() => handleSort('ipk')}>
                                         <div className="flex items-center justify-center gap-1.5">IPK <SortIcon columnKey="ipk" /></div>
                                     </th>
-                                    <th className="px-6 py-4 text-center cursor-pointer hover:bg-gray-50 group transition-colors" onClick={() => handleSort('semester')}>
+                                    <th className="px-4 py-3 text-center cursor-pointer hover:bg-gray-50 group transition-colors" onClick={() => handleSort('semester')}>
                                         <div className="flex items-center justify-center gap-1.5">Smt <SortIcon columnKey="semester" /></div>
                                     </th>
-                                    <th className="px-6 py-4 text-center">Dokumen Validasi</th>
-                                    <th className="px-6 py-4 text-center w-24">Aksi</th>
+                                    <th className="px-4 py-3 text-center">Dokumen Validasi</th>
+                                    <th className="px-4 py-3 text-center w-24">Aksi</th>
                                 </tr>
                             </thead>
                             
                             <tbody className="divide-y divide-gray-50 bg-white">
                                 {sortedData.length === 0 ? (
                                     <tr>
-                                        <td colSpan="7" className="px-6 py-12 text-center text-gray-400 font-medium italic">
+                                        <td colSpan="7" className="px-4 py-12 text-center text-gray-400 font-medium italic text-xs">
                                             {datapelamar.length === 0 
                                                 ? "Belum ada data pelamar yang masuk ke sistem." 
                                                 : "Data tidak ditemukan berdasarkan pencarian/filter."}
@@ -221,42 +208,40 @@ export default function DataPelamar({ datapelamar }) {
                                 ) : (
                                     sortedData.map((item, index) => (
                                         <tr key={item.id} className="hover:bg-gray-50/50 transition-colors group">
-                                            <td className="px-6 py-4 text-center font-bold text-gray-400 group-hover:text-gray-600">{index + 1}</td>
+                                            <td className="px-4 py-2.5 text-center font-bold text-gray-400 group-hover:text-gray-600 text-[11px]">{index + 1}</td>
                                             
-                                            <td className="px-6 py-4">
-                                                <div className="font-bold text-gray-800">{item.nama_lengkap}</div>
-                                                <div className="text-gray-500 text-xs font-medium">{item.asal_universitas}</div>
+                                            <td className="px-4 py-2.5">
+                                                <div className="font-bold text-gray-800 text-xs">{item.nama_lengkap}</div>
+                                                <div className="text-gray-500 text-[10px] font-medium">{item.asal_universitas}</div>
                                             </td>
 
-                                            <td className="px-6 py-4 text-center font-bold text-gray-700">
-                                                <div className="font-bold text-gray-800">{item.jenjang} {item.prodi}</div>
+                                            <td className="px-4 py-2.5 text-center">
+                                                <div className="font-bold text-gray-800 text-xs">{item.jenjang} {item.prodi}</div>
                                             </td>
                                             
-                                            <td className="px-6 py-4 text-center font-bold text-gray-700">{item.ipk || '-'}</td>
-                                            <td className="px-6 py-4 text-center font-bold text-gray-700">{item.semester || '-'}</td>
+                                            <td className="px-4 py-2.5 text-center font-bold text-gray-700 text-xs">{item.ipk || '-'}</td>
+                                            <td className="px-4 py-2.5 text-center font-bold text-gray-700 text-xs">{item.semester || '-'}</td>
                                             
-                                            {/* KOLOM DOKUMEN (CV & PROPOSAL) */}
-                                            <td className="px-6 py-4 text-center">
-                                                <div className="flex justify-center items-center gap-2">
-                                                    <a href={item.file_cv ? `/storage/${item.file_cv}` : '#'} target={item.file_cv ? "_blank" : "_self"} className={`flex items-center gap-1 px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-wide border transition-colors ${item.file_cv ? 'bg-indigo-50 text-indigo-600 border-indigo-200 hover:bg-indigo-100' : 'bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed'}`}>
-                                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
+                                            <td className="px-4 py-2.5 text-center">
+                                                <div className="flex justify-center items-center gap-1.5">
+                                                    <a href={item.file_cv ? `/storage/${item.file_cv}` : '#'} target={item.file_cv ? "_blank" : "_self"} className={`flex items-center gap-1 px-2.5 py-1 rounded text-[9px] font-bold uppercase tracking-wide border transition-colors ${item.file_cv ? 'bg-indigo-50 text-indigo-600 border-indigo-200 hover:bg-indigo-100' : 'bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed'}`}>
+                                                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
                                                         CV
                                                     </a>
-                                                    <a href={item.file_proposal ? `/storage/${item.file_proposal}` : '#'} target={item.file_proposal ? "_blank" : "_self"} className={`flex items-center gap-1 px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-wide border transition-colors ${item.file_proposal ? 'bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-100' : 'bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed'}`}>
-                                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                                                    <a href={item.file_proposal ? `/storage/${item.file_proposal}` : '#'} target={item.file_proposal ? "_blank" : "_self"} className={`flex items-center gap-1 px-2.5 py-1 rounded text-[9px] font-bold uppercase tracking-wide border transition-colors ${item.file_proposal ? 'bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-100' : 'bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed'}`}>
+                                                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                                                         Proposal
                                                     </a>
                                                 </div>
                                             </td>
                                             
-                                            {/* KOLOM AKSI (EDIT & HAPUS) */}
-                                            <td className="px-6 py-4 text-center">
-                                                <div className="flex justify-center items-center gap-2">
-                                                    <button onClick={() => openEditModal(item)} type="button" className="p-2 bg-white text-blue-600 rounded-lg border border-gray-200 hover:bg-blue-50 hover:border-blue-300 transition-colors shadow-sm" title="Edit Data">
-                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                                            <td className="px-4 py-2.5 text-center">
+                                                <div className="flex justify-center items-center gap-1.5">
+                                                    <button onClick={() => openEditModal(item)} type="button" className="p-1.5 bg-white text-blue-600 rounded border border-gray-200 hover:bg-blue-50 transition-colors shadow-sm" title="Edit Data">
+                                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                                                     </button>
-                                                    <button onClick={() => handleDelete(item.id, item.nama_lengkap)} type="button" className="p-2 bg-white text-red-500 rounded-lg border border-gray-200 hover:bg-red-50 hover:border-red-300 transition-colors shadow-sm" title="Hapus Pelamar">
-                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                                    <button onClick={() => handleDelete(item.id, item.nama_lengkap)} type="button" className="p-1.5 bg-white text-red-500 rounded border border-gray-200 hover:bg-red-50 transition-colors shadow-sm" title="Hapus Pelamar">
+                                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                                                     </button>
                                                 </div>
                                             </td>
