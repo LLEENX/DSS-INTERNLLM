@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string('asal_universitas');
             $table->string('prodi');
             $table->enum('jenjang', ['D3', 'D4', 'S1']);
-            $table->float('ipk');
             $table->integer('semester');
             $table->string('path_cv');
             $table->string('path_proposal');

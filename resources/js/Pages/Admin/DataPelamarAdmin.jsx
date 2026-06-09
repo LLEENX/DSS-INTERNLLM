@@ -77,8 +77,7 @@ export default function DataPelamar({ datapelamar }) {
         jenjang: '',
         prodi: '',
         path_cv: null,
-        path_proposal: null,
-        _method: 'PUT', 
+        path_proposal: null, 
     });
 
     const openEditModal = (pelamar) => {
@@ -87,7 +86,7 @@ export default function DataPelamar({ datapelamar }) {
             nama_lengkap: pelamar.nama_lengkap || '',
             asal_universitas: pelamar.asal_universitas || '',
             nim: pelamar.nim || '',
-            ipk: pelamar.ipk || '',
+            ipk: pelamar.ipk_ekstraksi || '',
             jenjang: pelamar.jenjang || '',
             prodi: pelamar.prodi || '',
             semester: pelamar.semester || '',
@@ -185,8 +184,8 @@ export default function DataPelamar({ datapelamar }) {
                                     <th className="px-4 py-3 text-center cursor-pointer hover:bg-gray-50 group transition-colors" onClick={() => handleSort('prodi')}>
                                         <div className="flex items-center justify-center gap-1.5">Program Studi <SortIcon columnKey="prodi" /></div>
                                     </th>
-                                    <th className="px-4 py-3 text-center cursor-pointer hover:bg-gray-50 group transition-colors" onClick={() => handleSort('ipk')}>
-                                        <div className="flex items-center justify-center gap-1.5">IPK <SortIcon columnKey="ipk" /></div>
+                                    <th className="px-4 py-3 text-center cursor-pointer hover:bg-gray-50 group transition-colors" onClick={() => handleSort('ipk_ekstraksi')}>
+                                        <div className="flex items-center justify-center gap-1.5">IPK <SortIcon columnKey="ipk_ekstraksi" /></div>
                                     </th>
                                     <th className="px-4 py-3 text-center cursor-pointer hover:bg-gray-50 group transition-colors" onClick={() => handleSort('semester')}>
                                         <div className="flex items-center justify-center gap-1.5">Smt <SortIcon columnKey="semester" /></div>
@@ -219,16 +218,34 @@ export default function DataPelamar({ datapelamar }) {
                                                 <div className="font-bold text-gray-800 text-xs">{item.jenjang} {item.prodi}</div>
                                             </td>
                                             
-                                            <td className="px-4 py-2.5 text-center font-bold text-gray-700 text-xs">{item.ipk || '-'}</td>
+                                            <td className="px-4 py-2.5 text-center">
+                                                {item.ipk_ekstraksi ? (
+                                                    <span className="font-black text-indigo-600 text-xs">{item.ipk_ekstraksi}</span>
+                                                ) : (
+                                                    <span className="bg-orange-50 text-orange-500 border border-orange-100 px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider">Menunggu Penilaian</span>
+                                                )}
+                                            </td>
+
                                             <td className="px-4 py-2.5 text-center font-bold text-gray-700 text-xs">{item.semester || '-'}</td>
                                             
                                             <td className="px-4 py-2.5 text-center">
                                                 <div className="flex justify-center items-center gap-1.5">
-                                                    <a href={item.file_cv ? `/storage/${item.file_cv}` : '#'} target={item.file_cv ? "_blank" : "_self"} className={`flex items-center gap-1 px-2.5 py-1 rounded text-[9px] font-bold uppercase tracking-wide border transition-colors ${item.file_cv ? 'bg-indigo-50 text-indigo-600 border-indigo-200 hover:bg-indigo-100' : 'bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed'}`}>
+                                                    {/* Tombol CV (Sudah benar menggunakan item.path_cv) */}
+                                                    <a 
+                                                        href={item.path_cv ? `/storage/${item.path_cv}` : '#'} 
+                                                        target={item.path_cv ? "_blank" : "_self"} 
+                                                        className={`flex items-center gap-1 px-2.5 py-1 rounded text-[9px] font-bold uppercase tracking-wide border transition-colors ${item.path_cv ? 'bg-indigo-50 text-indigo-600 border-indigo-200 hover:bg-indigo-100' : 'bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed'}`}
+                                                    >
                                                         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
                                                         CV
                                                     </a>
-                                                    <a href={item.file_proposal ? `/storage/${item.file_proposal}` : '#'} target={item.file_proposal ? "_blank" : "_self"} className={`flex items-center gap-1 px-2.5 py-1 rounded text-[9px] font-bold uppercase tracking-wide border transition-colors ${item.file_proposal ? 'bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-100' : 'bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed'}`}>
+                                                    
+                                                    {/* Tombol Proposal (HARUS DIGANTI MENJADI item.path_proposal) */}
+                                                    <a 
+                                                        href={item.path_proposal ? `/storage/${item.path_proposal}` : '#'} 
+                                                        target={item.path_proposal ? "_blank" : "_self"} 
+                                                        className={`flex items-center gap-1 px-2.5 py-1 rounded text-[9px] font-bold uppercase tracking-wide border transition-colors ${item.path_proposal ? 'bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-100' : 'bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed'}`}
+                                                    >
                                                         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                                                         Proposal
                                                     </a>
@@ -257,61 +274,64 @@ export default function DataPelamar({ datapelamar }) {
             {/* MODAL FORM EDIT */}
             {isEditModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+                    <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
                         <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-                            <h3 className="text-lg font-bold text-gray-800">Edit Data Pelamar</h3>
+                            <h3 className="text-sm font-extrabold text-gray-800 uppercase tracking-tight">Edit Data Pelamar</h3>
                             <button onClick={closeEditModal} className="text-gray-400 hover:text-red-500 transition-colors">
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
                             </button>
                         </div>
                         <form onSubmit={submitEdit}>
-                            <div className="px-6 space-y-4">
-                                <div className="grid grid-cols-2 gap-4 mt-4">
+                            <div className="px-6 space-y-3 pt-4">
+                                <div className="grid grid-cols-2 gap-3">
                                     <div>
-                                        <label className="block text-sm font-bold text-gray-700 mb-1">Nama Lengkap</label>
-                                        <input type="text" value={data.nama_lengkap} onChange={e => setData('nama_lengkap', e.target.value)} className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" required />
+                                        <label className="block text-[11px] font-bold text-gray-700 mb-1">Nama Lengkap</label>
+                                        <input type="text" value={data.nama_lengkap} onChange={e => setData('nama_lengkap', e.target.value)} className="w-full rounded border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-xs py-1.5" required />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-bold text-gray-700 mb-1">NIM</label>
-                                        <input type="text" value={data.nim} onChange={e => setData('nim', e.target.value)} className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" required />
+                                        <label className="block text-[11px] font-bold text-gray-700 mb-1">NIM</label>
+                                        <input type="text" value={data.nim} onChange={e => setData('nim', e.target.value)} className="w-full rounded border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-xs py-1.5" required />
                                     </div>
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-bold text-gray-700 mb-1">Asal Universitas</label>
-                                    <input type="text" value={data.asal_universitas} onChange={e => setData('asal_universitas', e.target.value)} className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" required />
+                                    <label className="block text-[11px] font-bold text-gray-700 mb-1">Asal Universitas</label>
+                                    <input type="text" value={data.asal_universitas} onChange={e => setData('asal_universitas', e.target.value)} className="w-full rounded border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-xs py-1.5" required />
                                 </div>
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-3 gap-3">
                                     <div>
-                                        <label className="block text-sm font-bold text-gray-700 mb-1">Jenjang</label>
-                                        <input type="text" value={data.jenjang} onChange={e => setData('jenjang', e.target.value)} className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" />
+                                        <label className="block text-[11px] font-bold text-gray-700 mb-1">Jenjang</label>
+                                        <input type="text" value={data.jenjang} onChange={e => setData('jenjang', e.target.value)} className="w-full rounded border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-xs py-1.5" />
+                                    </div>
+                                    <div className="col-span-2">
+                                        <label className="block text-[11px] font-bold text-gray-700 mb-1">Prodi</label>
+                                        <input type="text" value={data.prodi} onChange={e => setData('prodi', e.target.value)} className="w-full rounded border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-xs py-1.5" />
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label className="block text-[11px] font-bold text-gray-700 mb-1">IPK (Koreksi Admin)</label>
+                                        <input type="number" step="0.01" max="4.00" value={data.ipk} onChange={e => setData('ipk', e.target.value)} className="w-full rounded border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-xs py-1.5" />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-bold text-gray-700 mb-1">Prodi</label>
-                                        <input type="text" value={data.prodi} onChange={e => setData('prodi', e.target.value)} className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" />
+                                        <label className="block text-[11px] font-bold text-gray-700 mb-1">Semester (Saat Ini)</label>
+                                        <input type="number" max="8" value={data.semester} onChange={e => setData('semester', e.target.value)} className="w-full rounded border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-xs py-1.5" />
+                                    </div>
+                                </div>
+                                
+                                <div className="grid grid-cols-2 gap-3 pt-2">
+                                    <div>
+                                        <label className="block text-[11px] font-bold text-gray-700 mb-1">Update CV</label>
+                                        <input type="file" accept=".pdf" onChange={e => setData('path_cv', e.target.files[0])} className="w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[9px] file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-bold text-gray-700 mb-1">IPK</label>
-                                        <input type="number" step="0.01" max="4.00" value={data.ipk} onChange={e => setData('ipk', e.target.value)} className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-bold text-gray-700 mb-1">Semester</label>
-                                        <input type="number" max="8" value={data.semester} onChange={e => setData('semester', e.target.value)} className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-bold text-gray-700 mb-1">Update CV (PDF)</label>
-                                        <input type="file" accept=".pdf" onChange={e => setData('file_cv', e.target.files[0])} className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
-                                        <p className="text-[10px] text-gray-400 mt-1">*Kosongkan jika tidak diubah.</p>
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-bold text-gray-700 mb-1">Update Proposal (PDF)</label>
-                                        <input type="file" accept=".pdf" onChange={e => setData('file_proposal', e.target.files[0])} className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100" />
-                                        <p className="text-[10px] text-gray-400 mt-1">*Kosongkan jika tidak diubah.</p>
+                                        <label className="block text-[11px] font-bold text-gray-700 mb-1">Update Proposal</label>
+                                        <input type="file" accept=".pdf" onChange={e => setData('path_proposal', e.target.files[0])} className="w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[9px] file:font-bold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100" />
                                     </div>
                                 </div>
                             </div>
-                            <div className="mt-6 px-6 py-4 bg-gray-50 flex justify-end gap-2 border-t border-gray-100">
-                                <button type="button" onClick={closeEditModal} className="px-4 py-2 text-sm font-bold text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">Batal</button>
-                                <button type="submit" disabled={processing} className="px-4 py-2 text-sm font-bold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50">{processing ? 'Menyimpan...' : 'Simpan Perubahan'}</button>
+                            <div className="mt-5 px-6 py-3 bg-gray-50 flex justify-end gap-2 border-t border-gray-100">
+                                <button type="button" onClick={closeEditModal} className="px-4 py-1.5 text-xs font-bold text-gray-600 bg-white border border-gray-300 rounded hover:bg-gray-50 transition-colors">Batal</button>
+                                <button type="submit" disabled={processing} className="px-4 py-1.5 text-xs font-bold text-white bg-blue-600 rounded hover:bg-blue-700 transition-colors disabled:opacity-50">{processing ? 'Menyimpan...' : 'Simpan Perubahan'}</button>
                             </div>
                         </form>
                     </div>

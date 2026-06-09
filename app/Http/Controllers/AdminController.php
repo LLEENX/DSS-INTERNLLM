@@ -62,6 +62,7 @@ class AdminController extends Controller
     {
         $dataPelamar = DB::table('pelamar')
             ->leftjoin('users', 'pelamar.user_id', '=', 'users.id')
+            ->leftJoin('hasil_ekstraksi', 'pelamar.id', '=', 'hasil_ekstraksi.pelamar_id')
             ->select(
                 'pelamar.id',
                 'pelamar.nama_lengkap',
@@ -69,10 +70,10 @@ class AdminController extends Controller
                 'pelamar.nim',
                 'pelamar.prodi',
                 'pelamar.jenjang',
-                'pelamar.ipk',
                 'pelamar.semester',
                 'pelamar.path_cv',
                 'pelamar.path_proposal',
+                'hasil_ekstraksi.ipk_ekstraksi'
             )
             ->orderBy('pelamar.id', 'asc')
             ->get();
@@ -87,41 +88,53 @@ class AdminController extends Controller
     public function destroyPelamar($id)
     {
         // Cari data pelamar berdasarkan ID lalu hapus
-        DB::table('pelamar')->where('id', $id)->delete();
+        $pelamar = DB::table('pelamar')->where('id', $id)->first();
         
         // menghapus data user
-        $pelamar = DB::table('pelamar')->where('id', $id)->first();
-        DB::table('users')->where('id', $pelamar->user_id)->delete();
+        if ($pelamar) {
+            DB::table('pelamar')->where('id', $id)->delete();
+            DB::table('users')->where('id', $pelamar->user_id)->delete();
+        }
 
         return redirect()->back();
     }
 
     public function editPelamar(Request $request, $id)
     {
-        $updateData = [
+        // Kumpulkan data untuk di-update ke tabel PELAMAR
+        $updatePelamar = [
             'nama_lengkap' => $request->nama_lengkap,
             'asal_universitas' => $request->asal_universitas,
             'nim' => $request->nim,
-            'ipk' => $request->ipk,
             'jenjang' => $request->jenjang,
             'prodi' => $request->prodi,
             'semester' => $request->semester,
         ];
 
-        // Cek mengunggah file CV baru
         if ($request->hasFile('path_cv')) {
-            $pathCV = $request->file('path_cv')->store('berkas_cv', 'public');
-            
-            $updateData['path_cv'] = $pathCV;
+            $updatePelamar['path_cv'] = $request->file('path_cv')->store('berkas_cv', 'public');
         }
 
-        // Cek mengunggah file Proposal baru
         if ($request->hasFile('path_proposal')) {
-            $pathProposal = $request->file('path_proposal')->store('berkas_proposal', 'public');
-            $updateData['path_proposal'] = $pathProposal;
+            $updatePelamar['path_proposal'] = $request->file('path_proposal')->store('berkas_proposal', 'public');
         }
 
-        DB::table('pelamar')->where('id', $id)->update($updateData);
+        // Eksekusi update ke tabel pelamar
+        DB::table('pelamar')->where('id', $id)->update($updatePelamar);
+
+        // Mengubah IPK, simpan ke tabel HASIL_EKSTRAKSI
+        if ($request->has('ipk')) {
+            // Ubah koma jadi titik
+            $ipkBersih = str_replace(',', '.', $request->ipk);
+            
+            DB::table('hasil_ekstraksi')->updateOrInsert(
+                ['pelamar_id' => $id],
+                [
+                    'ipk_ekstraksi' => (float) $ipkBersih,
+                    'updated_at' => now()
+                ]
+            );
+        }
 
         return redirect()->back();
     }
@@ -160,13 +173,14 @@ class AdminController extends Controller
             ->select(
                 'pelamar.id',
                 'pelamar.nama_lengkap',
-                'pelamar.ipk',
                 'pelamar.semester',
-                'pelamar.file_cv',
-                'pelamar.file_proposal',
-                'hasil_ekstraksi.skor_jurusan_final as c3',
-                'hasil_ekstraksi.jumlah_skill_init as c4',
-                'hasil_ekstraksi.skor_proposal_final as c5',
+                'pelamar.path_cv',
+                'pelamar.path_proposal',
+                'hasil_ekstraksi.ipk_ekstraksi as c1',
+                'hasil_ekstraksi.skor_jurusan as c3',
+                'hasil_ekstraksi.jumlah_skill as c4',
+                'hasil_ekstraksi.skor_proposal as c5',
+                'hasil_ekstraksi.teks_mentah',
                 'hasil_ekstraksi.status_proses'
             )
             ->get();
@@ -176,18 +190,16 @@ class AdminController extends Controller
         ]);
     }
 
-// Fungsi Pemicu NLP
+    // Fungsi NLP
     public function prosesNLP(Request $request)
     {
         $pelamarId = $request->id;
-        $type = $request->type; // 'cv' atau 'proposal'
+        $type = $request->type; 
         
-        // Ambil data pelamar
         $pelamar = DB::table('pelamar')->where('id', $pelamarId)->first();
-        $filePath = public_path('storage/' . ($type == 'cv' ? $pelamar->file_cv : $pelamar->file_proposal));
+        $filePath = public_path('storage/' . ($type == 'cv' ? $pelamar->path_cv : $pelamar->path_proposal));
 
         try {
-            // Kirim File ke FastAPI
             $response = Http::attach(
                 'file', file_get_contents($filePath), basename($filePath)
             )->post('http://127.0.0.1:8001/predict-' . $type, [
@@ -197,17 +209,30 @@ class AdminController extends Controller
             if ($response->successful()) {
                 $result = $response->json();
                 
-                // Simpan/Update ke tabel hasil_ekstraksi sesuai ERD
+                $updateData = [
+                    'status_proses' => 'berhasil',
+                    'updated_at' => now()
+                ];
+
+                if ($type == 'cv') {
+                    if (isset($result['ipk'])) $updateData['ipk_ekstraksi'] = (float) str_replace(',', '.', $result['ipk']);
+                    if (isset($result['skor_jurusan'])) $updateData['skor_jurusan'] = $result['skor_jurusan'];
+                    if (isset($result['jumlah_skill'])) $updateData['jumlah_skill'] = $result['jumlah_skill'];
+                }
+
+                if ($type == 'proposal') {
+                    if (isset($result['skor_proposal'])) $updateData['skor_proposal'] = $result['skor_proposal'];
+                    
+                    if (isset($result['teks_mentah'])) {
+                        $updateData['teks_mentah'] = $result['teks_mentah'];
+                    }
+                }
+                
                 DB::table('hasil_ekstraksi')->updateOrInsert(
                     ['pelamar_id' => $pelamarId],
-                    [
-                        'skor_jurusan_final' => $result['skor_jurusan'] ?? DB::raw('skor_jurusan_final'),
-                        'jumlah_skill_init'  => $result['jumlah_skill'] ?? DB::raw('jumlah_skill_init'),
-                        'skor_proposal_final' => $result['skor_proposal'] ?? DB::raw('skor_proposal_final'),
-                        'status_proses'      => 'berhasil',
-                        'updated_at'         => now()
-                    ]
+                    $updateData
                 );
+
                 return redirect()->back()->with('success', 'Analisis AI Berhasil');
             }
         } catch (\Exception $e) {

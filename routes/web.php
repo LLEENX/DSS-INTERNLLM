@@ -24,7 +24,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Route untuk data pelamar
         Route::get('/data-pelamar', [AdminController::class, 'dataPelamar'])->name('admin.data-pelamar');
         Route::get('/data-pelamar/{id}/edit', [AdminController::class, 'editPelamar'])->name('admin.data-pelamar.edit');
-        Route::put('/data-pelamar/{id}', [AdminController::class, 'updatePelamar'])->name('admin.data-pelamar.update');
+        Route::post('/admin/data-pelamar/{id}', [AdminController::class, 'editPelamar'])->name('admin.data-pelamar.update');
         Route::delete('/data-pelamar/{id}', [AdminController::class, 'destroyPelamar'])->name('admin.data-pelamar.destroy');
         
         // Route untuk Manajemen Kriteria

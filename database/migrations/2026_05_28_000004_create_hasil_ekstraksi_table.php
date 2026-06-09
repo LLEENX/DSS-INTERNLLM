@@ -18,6 +18,7 @@ return new class extends Migration
             $table->json('raw_entitas_ner')->nullable();
             $table->float('skor_jurusan')->default(0);
             $table->integer('jumlah_skill')->default(0);
+            $table->float('ipk_ekstraksi')->nullable();
             $table->float('skor_proposal')->default(0);
             $table->enum('status_proses', ['tertunda', 'memproses', 'berhasil', 'gagal'])->default('tertunda');
             $table->timestamps();
