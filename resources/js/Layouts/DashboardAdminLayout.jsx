@@ -54,7 +54,7 @@ export default function DashboardAdminLayout({ header, children }) {
         },
         {
             title: 'Proses dan Hasil Seleksi',
-            href: '#',
+            href: route('admin.hasil-seleksi'),
             active: isActive('admin.hasil-seleksi'),
             icon: (
                 <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AdminController;
+use App\Services\SPKService;
 
 Route::get('/', function () {
     if (Auth::check()) {
@@ -42,6 +43,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Route untuk penilaian
     Route::get('/penilaian', [AdminController::class, 'penilaian'])->name('admin.penilaian');
     Route::post('/penilaian/proses-nlp', [AdminController::class, 'prosesNLP'])->name('admin.proses-nlp');
+
+    // Route untuk hasil seleksi
+    Route::get('/hasil-seleksi', [AdminController::class, 'hasilSeleksi'])->name('admin.hasil-seleksi');
+    Route::post('/hasil-seleksi/eksekusi', [AdminController::class, 'prosesSeleksiEksekusi'])->name('admin.proses-seleksi-eksekusi');
+
+    // Route untuk proses AHP dan SAW
+    Route::post('/proses-ahp-saw', function (SPKService $spkService) {
+        // Panggil metode hitungAHP() untuk mendapatkan bobot kriteria
+        $spkService->hitungAHP();
+
+        // Panggil metode hitungSAW() untuk melakukan perhitungan SAW
+        $spkService->hitungSAW();
+
+        return redirect()->back();
+
+    });
 
 });
 

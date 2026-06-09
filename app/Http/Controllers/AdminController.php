@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Support\Facades\Storage;
 use Illuminate\Support\Facades\Http;
+use App\Services\SPKService;
 
 class AdminController extends Controller
 {
@@ -238,6 +239,38 @@ class AdminController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Gagal terhubung ke server AI');
         }
+    }
+
+    public function hasilSeleksi()
+    {
+        // Ambil data hasil seleksi dari database
+        $hasilSeleksi = DB::table('pelamar')
+        ->leftjoin('hasil_seleksi', 'pelamar.id', '=', 'hasil_seleksi.pelamar_id')
+        ->select(
+            'pelamar.id',
+            'pelamar.nama_lengkap',
+            'pelamar.asal_universitas',
+            'hasil_seleksi.nilai_preferensi_v',
+            'hasil_seleksi.status'
+        )
+        // ->orderBy('hasil_seleksi.ranking', 'asc')
+        ->orderBy('pelamar.id', 'asc')
+        ->get();
+
+    return Inertia::render('Admin/HasilSeleksi', [
+        'hasilSeleksi' => $hasilSeleksi
+    ]);
+    }
+
+    public function prosesSeleksi(SPKService $spkService)
+    {
+        // Cukup panggil service-nya
+        $hasil = $spkService->hitungSAW();
+        
+        // Simpan ke tabel Hasil_Seleksi
+        // ...
+        
+        return redirect()->back()->with('success', 'Seleksi berhasil dijalankan');
     }
 
 }
