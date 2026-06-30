@@ -103,6 +103,7 @@ export default function Penilaian({ datapelamar }) {
                                         {/* Aksi Trigger NLP */}
                                         <td className="px-4 py-2 text-center">
                                             <div className="flex gap-1.5 justify-center">
+                                                {/* NLP untuk CV */}
                                                 <button 
                                                     disabled={processingId.id === item.id}
                                                     onClick={() => handleNLP(item.id, 'cv')}
@@ -114,16 +115,13 @@ export default function Penilaian({ datapelamar }) {
                                                 >
                                                     {processingId.id === item.id && processingId.type === 'cv' ? '...' : 'CV'}
                                                 </button>
+                                                {/* NLP untuk Proposal */}
                                                 <button 
-                                                    disabled={processingId.id === item.id}
-                                                    onClick={() => handleNLP(item.id, 'proposal')}
-                                                    className={`px-2 py-1 rounded text-[9px] font-black uppercase border transition-all flex items-center gap-1 ${
-                                                        processingId.id === item.id && processingId.type === 'proposal'
-                                                        ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-wait'
-                                                        : 'bg-white text-emerald-600 border-emerald-200 hover:bg-emerald-600 hover:text-white'
-                                                    }`}
+                                                    disabled={true}
+                                                    title="Tahap Pengembangan (Integrasi Gemini)"
+                                                    className="px-2 py-1 rounded text-[9px] font-black uppercase border bg-gray-100 text-gray-300 border-gray-200 cursor-not-allowed flex items-center gap-1"
                                                 >
-                                                    {processingId.id === item.id && processingId.type === 'proposal' ? '...' : 'Prop'}
+                                                    Prop
                                                 </button>
                                             </div>
                                         </td>
