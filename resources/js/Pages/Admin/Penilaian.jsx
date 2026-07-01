@@ -33,7 +33,7 @@ export default function Penilaian({ datapelamar }) {
     return (
         <DashboardAdminLayout>
             <Head title="Penilaian AI" />
-            <div className="max-w-7xl mx-auto h-full flex flex-col space-y-3">
+            <div className="max-w-7xl mx-auto h-full flex flex-col space-y-3 relative">
                 
                 {/* HEADER */}
                 <div className="shrink-0 flex justify-between items-end mt-1">
@@ -105,21 +105,25 @@ export default function Penilaian({ datapelamar }) {
                                             <div className="flex gap-1.5 justify-center">
                                                 {/* NLP untuk CV */}
                                                 <button 
-                                                    disabled={processingId.id === item.id}
+                                                    disabled={processingId.id !== null}
                                                     onClick={() => handleNLP(item.id, 'cv')}
                                                     className={`px-2 py-1 rounded text-[9px] font-black uppercase border transition-all flex items-center gap-1 ${
                                                         processingId.id === item.id && processingId.type === 'cv'
                                                         ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-wait'
-                                                        : 'bg-white text-indigo-600 border-indigo-200 hover:bg-indigo-600 hover:text-white'
+                                                        : 'bg-white text-indigo-600 border-indigo-200 hover:bg-indigo-600 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed'
                                                     }`}
                                                 >
-                                                    {processingId.id === item.id && processingId.type === 'cv' ? '...' : 'CV'}
+                                                    CV
                                                 </button>
                                                 {/* NLP untuk Proposal */}
                                                 <button 
-                                                    disabled={true}
-                                                    title="Tahap Pengembangan (Integrasi Gemini)"
-                                                    className="px-2 py-1 rounded text-[9px] font-black uppercase border bg-gray-100 text-gray-300 border-gray-200 cursor-not-allowed flex items-center gap-1"
+                                                    disabled={processingId.id !== null}
+                                                    onClick={() => handleNLP(item.id, 'proposal')}
+                                                    className={`px-2 py-1 rounded text-[9px] font-black uppercase border transition-all flex items-center gap-1 ${
+                                                        processingId.id === item.id && processingId.type === 'proposal'
+                                                        ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-wait'
+                                                        : 'bg-white text-emerald-600 border-emerald-200 hover:bg-emerald-600 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed'
+                                                    }`}
                                                 >
                                                     Prop
                                                 </button>
@@ -133,9 +137,36 @@ export default function Penilaian({ datapelamar }) {
                 </div>
             </div>
 
+            {/* =========================================
+                OVERLAY LOADING ANIMASI (BARU)
+            ========================================= */}
+            {processingId.id !== null && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm transition-opacity">
+                    <div className="bg-white p-8 rounded-2xl shadow-2xl flex flex-col items-center max-w-sm w-full mx-4 transform animate-pulse-slow">
+                        {/* Spinner SVG */}
+                        <svg className={`animate-spin h-14 w-14 mb-4 ${processingId.type === 'cv' ? 'text-indigo-600' : 'text-emerald-600'}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        
+                        {/* Dynamic Caption Title */}
+                        <h3 className="text-lg font-extrabold text-gray-800 text-center tracking-tight">
+                            {processingId.type === 'cv' ? 'Menganalisis CV...' : 'Mengevaluasi Proposal...'}
+                        </h3>
+                        
+                        {/* Dynamic Caption Description */}
+                        <p className="text-xs text-gray-500 text-center mt-2 leading-relaxed">
+                            {processingId.type === 'cv' 
+                                ? 'Model NLP (IndoBERT) sedang mengekstrak entitas IPK, Program Studi, dan Skill dari dokumen. Mohon tunggu sebentar.' 
+                                : 'Gemini AI sedang membaca dan menilai kelayakan proposal penelitian. Proses ini memakan waktu sekitar 5 - 15 detik.'}
+                        </p>
+                    </div>
+                </div>
+            )}
+
             {/* MODAL TEKS MENTAH */}
             {isTextModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+                <div className="fixed inset-0 z-[101] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
                     <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[80vh]">
                         <div className="px-5 py-3 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
                             <div>

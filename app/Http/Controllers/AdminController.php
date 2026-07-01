@@ -8,6 +8,13 @@ use Inertia\Inertia;
 use Inertia\Support\Facades\Storage;
 use Illuminate\Support\Facades\Http;
 use App\Services\SPKService;
+use Illuminate\Http\File;
+use Laravel\Ai\Contracts\Agent;
+use Laravel\Ai\Contracts\HasStructuredOutput;
+use Laravel\Ai\Promptable;
+use Laravel\Ai\Enums\Lab;
+use Laravel\Ai\Files\Document;
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 
 class AdminController extends Controller
 {
@@ -200,44 +207,103 @@ class AdminController extends Controller
         $pelamar = DB::table('pelamar')->where('id', $pelamarId)->first();
         $filePath = public_path('storage/' . ($type == 'cv' ? $pelamar->path_cv : $pelamar->path_proposal));
 
-        try {
-            $response = Http::attach(
-                'file', file_get_contents($filePath), basename($filePath)
-            )->post('http://127.0.0.1:8001/predict-' . $type, [
-                'pelamar_id' => $pelamarId
-            ]);
+        // ========================================================
+        // LOGIKA 1: JIKA TIPE = CV (Arahkan ke FastAPI Python)
+        // ========================================================
+        if ($type == 'cv') {
+            try {
+                $response = Http::attach(
+                    'file', file_get_contents($filePath), basename($filePath)
+                )->post('http://127.0.0.1:8001/predict-cv', [
+                    'pelamar_id' => $pelamarId
+                ]);
 
-            if ($response->successful()) {
-                $result = $response->json();
-                
-                $updateData = [
-                    'status_proses' => 'berhasil',
-                    'updated_at' => now()
-                ];
-
-                if ($type == 'cv') {
-                    if (isset($result['ipk'])) $updateData['ipk_ekstraksi'] = (float) str_replace(',', '.', $result['ipk']);
-                    if (isset($result['skor_jurusan'])) $updateData['skor_jurusan'] = $result['skor_jurusan'];
-                    if (isset($result['jumlah_skill'])) $updateData['jumlah_skill'] = $result['jumlah_skill'];
-                }
-
-                if ($type == 'proposal') {
-                    if (isset($result['skor_proposal'])) $updateData['skor_proposal'] = $result['skor_proposal'];
+                if ($response->successful()) {
+                    $result = $response->json();
                     
-                    if (isset($result['teks_mentah'])) {
-                        $updateData['teks_mentah'] = $result['teks_mentah'];
-                    }
+                    DB::table('hasil_ekstraksi')->updateOrInsert(
+                        ['pelamar_id' => $pelamarId],
+                        [
+                            'ipk_ekstraksi' => isset($result['ipk']) ? (float) str_replace(',', '.', $result['ipk']) : null,
+                            'skor_jurusan' => $result['skor_jurusan'] ?? 1,
+                            'jumlah_skill' => $result['jumlah_skill'] ?? 1,
+                            'status_proses' => 'berhasil',
+                            'updated_at' => now()
+                        ]
+                    );
+
+                    return redirect()->back()->with('success', 'CV Berhasil Dianalisis');
                 }
-                
-                DB::table('hasil_ekstraksi')->updateOrInsert(
-                    ['pelamar_id' => $pelamarId],
-                    $updateData
+            } catch (\Exception $e) {
+                return redirect()->back()->with('error', 'Gagal terhubung ke server FastAPI');
+            }
+        }
+
+        // ========================================================
+        // LOGIKA 2: JIKA TIPE = PROPOSAL (Arahkan ke GEMINI SDK)
+        // ========================================================
+        if ($type == 'proposal') {
+            try {
+                $agent = new class implements Agent, HasStructuredOutput {
+                    use Promptable;
+
+                    public function instructions(): string
+                    {
+                        return 'Berperanlah sebagai Seorang penilai peserta magang pada Badan Pusat Statistik yang sangat profesional. Baca dokumen proposal penelitian ini. 
+                        Berikan penilaian skala 1, 3, dan 5 berdasarkan orisinalitas dan kelayakan. Kategori yang digunakan untuk penilaian adalah kejelasan dan ketepatan rencana kegiatan yang dilakukan selama magang di tempat magang. Beri penilaian seketat mungkin dan dengan kategori penilaian yang sesuai.
+                        Dimana dengan penilaian tempat magang, pekerjaan atau project yang akan dilakukan peserta magang harus jelas dan sesuai dengan tujuan magang dan tentunya sesuai dengan di BPS.
+                        Seperti:
+                        1. Ahli dalam bidang Teknologi dan Teknologi Informasi
+                        2. Dapat menganalisis pada bidang Statistik dan Analisis Data
+                        3. Dapat membantu mendesain konten dan juga editing publikasi. 
+                        Berikan penilaian yang objektif dan profesional.
+                        Deskripsikan secara singkat alasan penilaian yang diberikan. Lalu buatkan ringkasan singkat dalam maksimal 500 kalimat.';
+                    }
+
+                    // Definisi struktur JSON yang HARUS dikembalikan oleh Gemini
+                    public function schema(JsonSchema $schema): array
+                    {
+                        return [
+                            'skor_proposal' => $schema->integer()->min(1)->max(5)->required(),
+                            'teks_mentah' => $schema->string()->required(),
+                        ];
+                    }
+                };
+
+                // Prompting Agen & Melampirkan File PDF
+                $response = $agent->prompt(
+                    'Tolong analisis dan nilai dokumen proposal yang saya lampirkan ini sesuai instruksimu.',
+                    provider: Lab::Gemini,
+                    model: 'gemini-3.5-flash',
+                    attachments: [
+                        Document::fromPath($filePath)
+                    ]
                 );
 
-                return redirect()->back()->with('success', 'Analisis AI Berhasil');
+                // Simpan ke database (Laravel AI otomatis mengubah response menjadi Array)
+                DB::table('hasil_ekstraksi')->updateOrInsert(
+                    ['pelamar_id' => $pelamarId],
+                    [
+                        // Langsung akses array berkat HasStructuredOutput
+                        'skor_proposal' => $response['skor_proposal'] ?? 1,
+                        'teks_mentah' => $response['teks_mentah'] ?? 'Berhasil dinilai, namun tidak ada ringkasan.',
+                        'status_proses' => 'berhasil',
+                        'updated_at' => now()
+                    ]
+                );
+
+                return redirect()->back()->with('success', 'Proposal Berhasil Dinilai oleh Gemini');
+
+            } catch (\Exception $e) {
+                dd([
+                    'pesan_error' => 'Gagal terhubung ke Gemini',
+                    'detail_asli' => $e->getMessage(),
+                    'baris_error' => $e->getLine(),
+                    'file_error'  => $e->getFile()
+                ]);
+                
+                // return redirect()->back()->with('error', 'Gagal... ');
             }
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Gagal terhubung ke server AI');
         }
     }
 

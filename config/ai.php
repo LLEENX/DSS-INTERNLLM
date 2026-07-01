@@ -13,7 +13,8 @@ return [
     |
     */
 
-    'default' => 'openai',
+    // 'default' => 'openai',
+    'default' => env('AI_PROVIDER', 'openai'),
     'default_for_images' => 'gemini',
     'default_for_audio' => 'openai',
     'default_for_transcription' => 'openai',
@@ -95,6 +96,7 @@ return [
             'driver' => 'gemini',
             'key' => env('GEMINI_API_KEY'),
             'url' => env('GEMINI_URL', 'https://generativelanguage.googleapis.com/v1beta/'),
+            // 'model' => 'gemini-3.5-flash',
         ],
 
         'groq' => [
