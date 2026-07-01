@@ -46,19 +46,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Route untuk hasil seleksi
     Route::get('/hasil-seleksi', [AdminController::class, 'hasilSeleksi'])->name('admin.hasil-seleksi');
-    Route::post('/hasil-seleksi/eksekusi', [AdminController::class, 'prosesSeleksiEksekusi'])->name('admin.proses-seleksi-eksekusi');
+    Route::post('/hasil-seleksi/eksekusi', [AdminController::class, 'prosesSeleksi'])->name('admin.proses-seleksi-eksekusi');
 
     // Route untuk proses AHP dan SAW
-    Route::post('/proses-ahp-saw', function (SPKService $spkService) {
-        // Panggil metode hitungAHP() untuk mendapatkan bobot kriteria
-        $spkService->hitungAHP();
-
-        // Panggil metode hitungSAW() untuk melakukan perhitungan SAW
-        $spkService->hitungSAW();
-
-        return redirect()->back();
-
-    });
+    Route::post('/proses-ahp-saw', [AdminController::class, 'prosesSeleksi'])->name('admin.proses-spk');
 
 });
 

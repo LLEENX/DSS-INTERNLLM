@@ -330,13 +330,65 @@ class AdminController extends Controller
 
     public function prosesSeleksi(SPKService $spkService)
     {
-        // Cukup panggil service-nya
-        $hasil = $spkService->hitungSAW();
+        // ==========================================
+        // 1. AMBIL BOBOT & TIPE KRITERIA DARI DATABASE
+        // ==========================================
+        // Asumsi tabelmu bernama 'kriteria' dan berurutan dari C1 sampai C5
+        $kriteria = DB::table('kriteria')->orderBy('kode_kriteria', 'asc')->get();
         
-        // Simpan ke tabel Hasil_Seleksi
-        // ...
-        
-        return redirect()->back()->with('success', 'Seleksi berhasil dijalankan');
+        if ($kriteria->count() !== 5) {
+            return redirect()->back()->with('error', 'Sistem membutuhkan tepat 5 kriteria untuk diproses.');
+        }
+
+        $weights = [];
+        $criteriaTypes = [];
+
+        foreach ($kriteria as $k) {
+            // Asumsi nama kolom di tabelmu: 'bobot_ahp' dan 'tipe'
+            $weights[] = (float) $k->bobot_ahp; 
+            $criteriaTypes[] = $k->tipe; // 'Benefit' atau 'Cost'
+        }
+
+        // ==========================================
+        // 2. AMBIL DATA PELAMAR
+        // ==========================================
+        $pelamarData = DB::table('pelamar')
+            ->leftJoin('hasil_ekstraksi', 'pelamar.id', '=', 'hasil_ekstraksi.pelamar_id')
+            ->select(
+                'pelamar.id',
+                'pelamar.nama_lengkap',
+                'hasil_ekstraksi.ipk_ekstraksi as c1',
+                'pelamar.semester as c2', 
+                'hasil_ekstraksi.skor_jurusan as c3',
+                'hasil_ekstraksi.jumlah_skill as c4',
+                'hasil_ekstraksi.skor_proposal as c5'
+            )
+            ->whereNotNull('hasil_ekstraksi.ipk_ekstraksi')
+            ->whereNotNull('hasil_ekstraksi.skor_proposal')
+            ->get();
+
+        if ($pelamarData->isEmpty()) {
+            return redirect()->back()->with('error', 'Belum ada data pelamar yang siap diseleksi (nilai AI belum lengkap).');
+        }
+
+        // ==========================================
+        // EKSEKUSI SAW & SIMPAN KE DATABASE
+        // ==========================================
+        $hasilSAW = $spkService->calculateSAW($pelamarData, $weights, $criteriaTypes);
+
+        foreach ($hasilSAW as $hasil) {
+            DB::table('hasil_seleksi')->updateOrInsert(
+                ['pelamar_id' => $hasil['id']],
+                [
+                    'nilai_preferensi_v' => $hasil['nilai_preferensi_v'],
+                    'ranking'  => $hasil['ranking'],
+                    'status' => 'Selesai',
+                    'updated_at' => now()
+                ]
+            );
+        }
+
+        return redirect()->back()->with('success', 'Perhitungan SAW berhasil! Cek halaman Hasil Seleksi.');
     }
 
 }
