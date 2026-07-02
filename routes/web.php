@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ApplicantController;
 use App\Services\SPKService;
 
 Route::get('/', function () {
@@ -19,6 +20,7 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
+    // Route untuk admin
     Route::prefix('admin')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
@@ -34,10 +36,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('/manajemen-kriteria/update', [AdminController::class, 'updateKriteria'])->name('admin.manajemen-kriteria.update');
     });
 
-    Route::prefix('pelamar')->group(function () {
-        Route::get('/dashboard', function () {
-            return Inertia::render('Pelamar/DashboardPelamar');
-        })->name('pelamar.dashboard');
+    // Route untuk pelamar
+    Route::prefix('applicant')->group(function () {
+        Route::get('/dashboard', [ApplicantController::class, 'dashboard'])->name('applicant.dashboard');
+        Route::get('/profil', [ApplicantController::class, 'profil'])->name('applicant.profil');
+        Route::post('/profil/submit', [ApplicantController::class, 'submitApplication'])->name('applicant.submit');
+        Route::get('/status', [ApplicantController::class, 'status'])->name('applicant.status');
     });
 
     // Route untuk penilaian
