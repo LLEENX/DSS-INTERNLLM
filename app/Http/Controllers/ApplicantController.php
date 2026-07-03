@@ -5,93 +5,88 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth; // Tambahkan import Auth Facade
 use Inertia\Inertia;
 
 class ApplicantController extends Controller
 {
-    /**
-     * Menampilkan Halaman Formulir Pendaftaran
-     */
-    public function showRegistrationForm()
+    public function dashboard()
     {
-        return Inertia::render('Applicant/Register');
+        // Gunakan Auth::id() yang 100% aman
+        $pelamar = DB::table('pelamar')->where('user_id', Auth::id())->first();
+        
+        return Inertia::render('Applicant/Dashboard', [
+            'hasApplied' => $pelamar ? true : false,
+        ]);
     }
 
-    /**
-     * Memproses Data Pendaftaran & Upload File
-     */
-    public function register(Request $request)
+    public function profil()
     {
-        // 1. VALIDASI INPUT & FILE (PENTING!)
+        $pelamar = DB::table('pelamar')->where('user_id', Auth::id())->first();
+        
+        return Inertia::render('Applicant/Profil', [
+            'hasApplied' => $pelamar ? true : false,
+            'pelamarData' => $pelamar
+        ]);
+    }
+
+    public function status()
+    {
+        $pelamar = DB::table('pelamar')
+            ->leftJoin('hasil_seleksi', 'pelamar.id', '=', 'hasil_seleksi.pelamar_id')
+            ->leftJoin('hasil_ekstraksi', 'pelamar.id', '=', 'hasil_ekstraksi.pelamar_id')
+            ->where('pelamar.user_id', Auth::id())
+            ->select('pelamar.*', 'hasil_seleksi.status as status_akhir', 'hasil_ekstraksi.status_proses')
+            ->first();
+
+        return Inertia::render('Applicant/Status', [
+            'pelamar' => $pelamar
+        ]);
+    }
+
+    public function submitApplication(Request $request)
+    {
         $request->validate([
             'nama_lengkap' => 'required|string|max:255',
             'asal_universitas' => 'required|string|max:255',
+            'ipk' => 'required|numeric|min:0|max:4',
             'semester' => 'required|integer|min:1|max:14',
-            // File harus PDF, maks 2MB untuk CV, 5MB untuk Proposal
+            'esai_motivasi' => 'required|string|min:50',
             'file_cv' => 'required|file|mimes:pdf|max:2048', 
-            'file_proposal' => 'required|file|mimes:pdf|max:10240', 
-        ], [
-            // Pesan Error
-            'file_cv.mimes' => 'Dokumen CV harus berformat PDF.',
-            'file_cv.max' => 'Ukuran CV tidak boleh melebihi 2MB.',
-            'file_proposal.mimes' => 'Dokumen Proposal harus berformat PDF.',
-            'file_proposal.max' => 'Ukuran Proposal tidak boleh melebihi 10MB.',
+            'file_proposal' => 'required|file|mimes:pdf|max:5120', 
         ]);
 
         try {
             DB::beginTransaction();
-
-            // MENANGANI UNGGAHAN FILE
-            // File disimpan di storage/app/public/dokumen/...
-            // Kita menggunakan disk 'public' agar bisa diakses oleh Admin
             
-            $pathCv = null;
-            if ($request->hasFile('file_cv')) {
-                $file = $request->file('file_cv');
-                // Beri nama unik: id_waktu_namafile.pdf
-                $fileName = time() . '_cv_' . $file->getClientOriginalName();
-                $pathCv = $file->storeAs('dokumen/cv', $fileName, 'public');
-            }
+            $pathCv = $request->file('file_cv')->storeAs('dokumen/cv', time() . '_cv_' . $request->file('file_cv')->getClientOriginalName(), 'public');
+            $pathProposal = $request->file('file_proposal')->storeAs('dokumen/proposal', time() . '_prop_' . $request->file('file_proposal')->getClientOriginalName(), 'public');
 
-            $pathProposal = null;
-            if ($request->hasFile('file_proposal')) {
-                $file = $request->file('file_proposal');
-                $fileName = time() . '_proposal_' . $file->getClientOriginalName();
-                $pathProposal = $file->storeAs('dokumen/proposal', $fileName, 'public');
-            }
-
-            // SIMPAN DATA KE TABEL PELAMAR
             $pelamarId = DB::table('pelamar')->insertGetId([
+                'user_id' => Auth::id(),
                 'nama_lengkap' => $request->nama_lengkap,
-                'nim' => $request->nim,
                 'asal_universitas' => $request->asal_universitas,
                 'semester' => $request->semester,
-                'path_cv' => $pathCv,
+                'esai_motivasi' => $request->esai_motivasi,
+                'path_cv' => $pathCv, 
                 'path_proposal' => $pathProposal,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
 
-            // BUAT BARIS KOSONG DI TABEL SPK (hasil_ekstraksi)
-            // Ini agar Admin bisa melihat pelamar baru di tabel Penilaian AI
             DB::table('hasil_ekstraksi')->insert([
                 'pelamar_id' => $pelamarId,
-                'status_proses' => 'menunggu', // Status awal
+                'ipk_ekstraksi' => (float) $request->ipk, 
+                'status_proses' => 'menunggu',
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
 
             DB::commit();
-
-            // Redirect kembali ke halaman pendaftaran dengan pesan sukses
-            return redirect()->route('daftar.show')->with('success', 'Pendaftaran berhasil! Data dan dokumen Anda telah kami terima.');
+            return redirect()->route('applicant.status')->with('success', 'Profil dan Dokumen berhasil dikirim!');
 
         } catch (\Exception $e) {
             DB::rollBack();
-            // Jika gagal, hapus file yang mungkin sudah terlanjur ter-upload
-            if ($pathCv) Storage::disk('public')->delete($pathCv);
-            if ($pathProposal) Storage::disk('public')->delete($pathProposal);
-
             return redirect()->back()->with('error', 'Terjadi kesalahan sistem: ' . $e->getMessage());
         }
     }

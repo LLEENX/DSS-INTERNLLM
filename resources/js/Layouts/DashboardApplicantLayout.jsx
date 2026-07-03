@@ -1,3 +1,4 @@
+// resources/js/Layouts/DashboardApplicantLayout.jsx
 import { Link, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import Dropdown from '@/Components/Dropdown';
@@ -9,44 +10,35 @@ export default function DashboardApplicantLayout({ children }) {
 
     const isActive = (routeName) => route().current(routeName);
 
-    // DAFTAR MENU PELAMAR
     const applicantMenus = [
         {
             title: 'Dashboard',
             href: route('applicant.dashboard'),
             active: isActive('applicant.dashboard'),
             icon: (
-                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
+                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
             )
         },
         {
-            title: 'Formulir Pendaftaran',
-            href: route('applicant.dashboard'),
-            active: isActive('applicant.dashboard'),
+            title: 'Profil & Pendaftaran',
+            href: route('applicant.profil'),
+            active: isActive('applicant.profil'),
             icon: (
-                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
+                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
             )
         },
         {
             title: 'Status Seleksi',
-            href: '#', // Nanti bisa diganti route('applicant.status') jika sudah dibuat
-            active: false,
+            href: route('applicant.status'),
+            active: isActive('applicant.status'),
             icon: (
-                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                </svg>
+                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
             )
         }
     ];
 
     return (
         <div className="flex h-screen bg-[#f8f9fa] font-sans overflow-hidden">
-            
-            {/* KOMPONEN SIDEBAR */}
             <SidebarLayout>
                 <nav className="p-4 space-y-1">
                     {applicantMenus.map((menu, index) => (
@@ -66,24 +58,14 @@ export default function DashboardApplicantLayout({ children }) {
                 </nav>
             </SidebarLayout>
 
-            {/* MAIN CONTENT AREA */}
             <div className="flex-1 flex flex-col h-screen overflow-hidden">
-                
-                {/* TOP NAVIGATION BAR */}
                 <header className="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-6 z-10 shrink-0">
                     <div className="md:hidden">
-                        <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="text-gray-500 hover:text-gray-700">
-                            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-                            </svg>
+                        <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="text-gray-500">
+                            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
                         </button>
                     </div>
-
-                    <div className="hidden md:block">
-                        <span className="text-xs font-bold text-gray-400 tracking-widest uppercase">Portal Pelamar</span>
-                    </div>
-
-                    {/* User Profile Dropdown */}
+                    <div className="hidden md:block"><span className="text-xs font-bold text-gray-400 tracking-widest uppercase">Portal Pelamar</span></div>
                     <div className="flex items-center gap-4">
                         <div className="relative">
                             <Dropdown>
@@ -93,22 +75,16 @@ export default function DashboardApplicantLayout({ children }) {
                                             {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
                                         </div>
                                         <span className="font-medium text-sm hidden sm:block">{user.name}</span>
-                                        <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                                        </svg>
+                                        <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
                                     </button>
                                 </Dropdown.Trigger>
-
                                 <Dropdown.Content>
-                                    <Dropdown.Link href={route('logout')} method="post" as="button">
-                                        Log Out
-                                    </Dropdown.Link>
+                                    <Dropdown.Link href={route('logout')} method="post" as="button">Log Out</Dropdown.Link>
                                 </Dropdown.Content>
                             </Dropdown>
                         </div>
                     </div>
                 </header>
-
                 <main className="flex-1 overflow-y-auto bg-[#f8f9fa] px-4 py-4 md:px-6 md:py-6">
                     {children}
                 </main>
