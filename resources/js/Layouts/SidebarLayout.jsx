@@ -6,8 +6,8 @@ export default function SidebarLayout({ header, children }) {
     const user = usePage().props.auth.user;
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-    const routeHome = user.role === 'admin' ? route('admin.dashboard') : route('pelamar.dashboard');
-    const isHomeActive = route().current('admin.dashboard') || route().current('pelamar.dashboard');
+    const routeHome = user.role === 'admin' ? route('admin.dashboard') : route('applicant.dashboard');
+    const isHomeActive = route().current('admin.dashboard') || route().current('applicant.dashboard');
     const isDataPelamarActive = route().current('admin.data-pelamar');
     const isHasilSeleksiActive = route().current('admin.hasil-seleksi');
 

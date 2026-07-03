@@ -2,7 +2,7 @@ import React from 'react';
 import { Head, Link } from '@inertiajs/react';
 import DashboardApplicantLayout from '@/Layouts/DashboardApplicantLayout';
 
-export default function Dashboard({ hasApplied }) {
+export default function DashboardApplicant({ hasApplied }) {
     return (
         <DashboardApplicantLayout>
             <Head title="Dashboard Pelamar" />
@@ -27,7 +27,7 @@ export default function Dashboard({ hasApplied }) {
                         <div className="mt-8">
                             {!hasApplied ? (
                                 <Link 
-                                    href={route('applicant.profil')}
+                                    href={route('applicant.profile')}
                                     className="inline-block px-8 py-3 bg-white text-indigo-600 text-xs font-black uppercase tracking-widest rounded-xl shadow-lg hover:bg-gray-50 transition-all"
                                 >
                                     Lengkapi Profil & Daftar

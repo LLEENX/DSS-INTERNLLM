@@ -12,7 +12,7 @@ Route::get('/', function () {
         if (Auth::user()->role === 'admin') {
             return redirect()->route('admin.dashboard');
         }
-        return redirect()->route('pelamar.dashboard');
+        return redirect()->route('applicant.dashboard');
     }
 
     return redirect()->route('login');
@@ -39,8 +39,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Route untuk pelamar
     Route::prefix('applicant')->group(function () {
         Route::get('/dashboard', [ApplicantController::class, 'dashboard'])->name('applicant.dashboard');
-        Route::get('/profil', [ApplicantController::class, 'profil'])->name('applicant.profil');
-        Route::post('/profil/submit', [ApplicantController::class, 'submitApplication'])->name('applicant.submit');
+        Route::get('/profile', [ApplicantController::class, 'profil'])->name('applicant.profile');
+        Route::post('/profile/submit', [ApplicantController::class, 'submitApplication'])->name('applicant.submit');
         Route::get('/status', [ApplicantController::class, 'status'])->name('applicant.status');
     });
 

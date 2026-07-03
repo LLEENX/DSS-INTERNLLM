@@ -22,7 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
             if (Auth::check() && Auth::user()->role === 'admin') {
                 return route('admin.dashboard');
             }
-            return route('pelamar.dashboard');
+            return route('applicant.dashboard');
         });
 
         //

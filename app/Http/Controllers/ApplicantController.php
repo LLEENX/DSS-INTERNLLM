@@ -15,7 +15,7 @@ class ApplicantController extends Controller
         // Gunakan Auth::id() yang 100% aman
         $pelamar = DB::table('pelamar')->where('user_id', Auth::id())->first();
         
-        return Inertia::render('Applicant/Dashboard', [
+        return Inertia::render('Applicant/DashboardApplicant', [
             'hasApplied' => $pelamar ? true : false,
         ]);
     }
@@ -24,7 +24,7 @@ class ApplicantController extends Controller
     {
         $pelamar = DB::table('pelamar')->where('user_id', Auth::id())->first();
         
-        return Inertia::render('Applicant/Profil', [
+        return Inertia::render('Applicant/ProfileApplicant', [
             'hasApplied' => $pelamar ? true : false,
             'pelamarData' => $pelamar
         ]);
@@ -39,7 +39,7 @@ class ApplicantController extends Controller
             ->select('pelamar.*', 'hasil_seleksi.status as status_akhir', 'hasil_ekstraksi.status_proses')
             ->first();
 
-        return Inertia::render('Applicant/Status', [
+        return Inertia::render('Applicant/StatusApplicant', [
             'pelamar' => $pelamar
         ]);
     }
