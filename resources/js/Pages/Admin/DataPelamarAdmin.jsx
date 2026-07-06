@@ -230,7 +230,7 @@ export default function DataPelamar({ datapelamar }) {
                                             
                                             <td className="px-4 py-2.5 text-center">
                                                 <div className="flex justify-center items-center gap-1.5">
-                                                    {/* Tombol CV (Sudah benar menggunakan item.path_cv) */}
+                                                    {/* Tombol CV */}
                                                     <a 
                                                         href={item.path_cv ? `/storage/${item.path_cv}` : '#'} 
                                                         target={item.path_cv ? "_blank" : "_self"} 
@@ -240,7 +240,7 @@ export default function DataPelamar({ datapelamar }) {
                                                         CV
                                                     </a>
                                                     
-                                                    {/* Tombol Proposal (HARUS DIGANTI MENJADI item.path_proposal) */}
+                                                    {/* Tombol Proposal */}
                                                     <a 
                                                         href={item.path_proposal ? `/storage/${item.path_proposal}` : '#'} 
                                                         target={item.path_proposal ? "_blank" : "_self"} 

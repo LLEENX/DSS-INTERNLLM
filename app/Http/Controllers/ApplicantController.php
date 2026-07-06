@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Auth; // Tambahkan import Auth Facade
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class ApplicantController extends Controller
@@ -46,12 +46,14 @@ class ApplicantController extends Controller
 
     public function submitApplication(Request $request)
     {
+        // 1. Validasi disesuaikan dengan database baru
         $request->validate([
             'nama_lengkap' => 'required|string|max:255',
+            'nim' => 'required|string|max:50|unique:pelamar,nim',
             'asal_universitas' => 'required|string|max:255',
-            'ipk' => 'required|numeric|min:0|max:4',
+            'prodi' => 'required|string|max:255',
+            'jenjang' => 'required|in:D3,D4,S1',
             'semester' => 'required|integer|min:1|max:14',
-            'esai_motivasi' => 'required|string|min:50',
             'file_cv' => 'required|file|mimes:pdf|max:2048', 
             'file_proposal' => 'required|file|mimes:pdf|max:5120', 
         ]);
@@ -62,12 +64,15 @@ class ApplicantController extends Controller
             $pathCv = $request->file('file_cv')->storeAs('dokumen/cv', time() . '_cv_' . $request->file('file_cv')->getClientOriginalName(), 'public');
             $pathProposal = $request->file('file_proposal')->storeAs('dokumen/proposal', time() . '_prop_' . $request->file('file_proposal')->getClientOriginalName(), 'public');
 
+            // 2. Insert ke tabel pelamar
             $pelamarId = DB::table('pelamar')->insertGetId([
                 'user_id' => Auth::id(),
                 'nama_lengkap' => $request->nama_lengkap,
+                'nim' => $request->nim,
                 'asal_universitas' => $request->asal_universitas,
+                'prodi' => $request->prodi,
+                'jenjang' => $request->jenjang,
                 'semester' => $request->semester,
-                'esai_motivasi' => $request->esai_motivasi,
                 'path_cv' => $pathCv, 
                 'path_proposal' => $pathProposal,
                 'created_at' => now(),
@@ -76,7 +81,7 @@ class ApplicantController extends Controller
 
             DB::table('hasil_ekstraksi')->insert([
                 'pelamar_id' => $pelamarId,
-                'ipk_ekstraksi' => (float) $request->ipk, 
+                'ipk_ekstraksi' => 0,
                 'status_proses' => 'menunggu',
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -87,7 +92,8 @@ class ApplicantController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Terjadi kesalahan sistem: ' . $e->getMessage());
+            // JURUS DEBUG: Matikan sistem dan cetak pesan error murni dari Database!
+            dd("ERROR DATABASE: " . $e->getMessage()); 
         }
     }
 }

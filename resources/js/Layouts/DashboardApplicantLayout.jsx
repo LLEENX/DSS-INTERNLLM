@@ -47,7 +47,7 @@ export default function DashboardApplicantLayout({ children }) {
                             href={menu.href}
                             className={`flex items-center px-4 py-3 rounded-r-full transition-colors ${
                                 menu.active
-                                ? 'bg-indigo-50 text-indigo-600 border-l-4 border-indigo-500 font-bold' 
+                                ? 'bg-orange-50 text-orange-600 border-l-4 border-orange-500 font-bold' 
                                 : 'text-gray-700 hover:bg-gray-50 font-medium'
                             }`}
                         >

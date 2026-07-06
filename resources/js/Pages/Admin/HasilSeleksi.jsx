@@ -93,11 +93,9 @@ export default function HasilSeleksi({ hasilSeleksi }) {
                                         {item.asal_universitas}
                                     </td>
                                     
-                                    {/* PENAMPILAN NILAI TANPA DESIMAL */}
                                     <td className="px-4 py-2.5 text-center">
                                         {item.nilai_preferensi_v ? (
                                             <span className="font-black text-indigo-600 text-xs">
-                                                {/* Dikalikan 100 lalu dibulatkan total ke angka bulat terdekat */}
                                                 {Math.round(parseFloat(item.nilai_preferensi_v) * 100)}
                                             </span>
                                         ) : (

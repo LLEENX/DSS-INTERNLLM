@@ -350,7 +350,7 @@ class AdminController extends Controller
         }
 
         // ==========================================
-        // 2. AMBIL DATA PELAMAR
+        // AMBIL DATA PELAMAR
         // ==========================================
         $pelamarData = DB::table('pelamar')
             ->leftJoin('hasil_ekstraksi', 'pelamar.id', '=', 'hasil_ekstraksi.pelamar_id')
@@ -376,13 +376,17 @@ class AdminController extends Controller
         // ==========================================
         $hasilSAW = $spkService->calculateSAW($pelamarData, $weights, $criteriaTypes);
 
+        $kuotaPenerimaan = 10;
+
         foreach ($hasilSAW as $hasil) {
+            $statusAkhir = ($hasil['ranking'] <= $kuotaPenerimaan) ? 'Lulus' : 'Tidak Lulus';
+            
             DB::table('hasil_seleksi')->updateOrInsert(
                 ['pelamar_id' => $hasil['id']],
                 [
                     'nilai_preferensi_v' => $hasil['nilai_preferensi_v'],
                     'ranking'  => $hasil['ranking'],
-                    'status' => 'Selesai',
+                    'status' => $statusAkhir,
                     'updated_at' => now()
                 ]
             );

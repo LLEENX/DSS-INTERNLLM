@@ -20,7 +20,7 @@ return new class extends Migration
             $table->integer('jumlah_skill')->default(0);
             $table->float('ipk_ekstraksi')->nullable();
             $table->float('skor_proposal')->default(0);
-            $table->enum('status_proses', ['tertunda', 'memproses', 'berhasil', 'gagal'])->default('tertunda');
+            $table->enum('status_proses', ['menunggu', 'memproses', 'berhasil', 'gagal'])->default('menunggu');
             $table->timestamps();
         });
     }

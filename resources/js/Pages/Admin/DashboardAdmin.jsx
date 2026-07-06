@@ -135,7 +135,7 @@ export default function DashboardAdmin({ statistik, topRankings, riwayatPendafta
                                                 ) : (
                                                     <>
                                                         <td className="px-3 py-1.5 text-center font-black text-indigo-600 text-[12px]">
-                                                            {item.nilai_preferensi_v}
+                                                            {Math.round(parseFloat(item.nilai_preferensi_v) * 100)}
                                                         </td>
                                                         <td className="px-3 py-1.5 text-center">
                                                             <span className="bg-emerald-50 text-emerald-700 border border-emerald-100 text-[12px] font-black px-1.5 py-0.5 rounded uppercase tracking-tighter">
