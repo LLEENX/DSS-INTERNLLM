@@ -99,10 +99,10 @@ export default function TopNavApplicantLayout({ children }) {
 
                                     <Dropdown.Content contentClasses="py-1 bg-white dark:bg-gray-700 w-56">
                                         {/* 1. Profil (Mengarah ke pengaturan akun bawaan Laravel Breeze) */}
-                                        <Dropdown.Link href={route('applicant.edit')} className="flex items-center gap-2 text-gray-700 dark:text-gray-200 py-2.5">
+                                        {/* <Dropdown.Link href={route('applicant.edit')} className="flex items-center gap-2 text-gray-700 dark:text-gray-200 py-2.5">
                                             <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                                             Profil
-                                        </Dropdown.Link>
+                                        </Dropdown.Link> */}
                                         
                                         {/* Logout */}
                                         <Dropdown.Link href={route('logout')} method="post" as="button" className="flex items-center gap-2 text-gray-700 dark:text-gray-200 py-2.5">
@@ -165,7 +165,7 @@ export default function TopNavApplicantLayout({ children }) {
                             </div>
                         </div>
                         <div className="mt-3 space-y-1">
-                            <Link href={route('applicant.edit')} className="block w-full text-left px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100">Profil</Link>
+                            {/* <Link href={route('applicant.edit')} className="block w-full text-left px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100">Profil</Link> */}
                             <Link href={route('logout')} method="post" as="button" className="block w-full text-left px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100">Logout</Link>
                             <div className="px-4 py-2 flex items-center justify-between hover:bg-gray-100 cursor-pointer" onClick={() => setDarkMode(!darkMode)}>
                                 <span className="text-base font-medium text-gray-500">Mode Gelap</span>

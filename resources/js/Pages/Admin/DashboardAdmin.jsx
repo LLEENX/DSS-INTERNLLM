@@ -23,7 +23,7 @@ export default function DashboardAdmin({ statistik, topRankings, riwayatPendafta
                 
                 {/* HEADER TITLE */}
                 <div className="shrink-0">
-                    <h3 className="text-xl font-extrabold text-gray-800 tracking-tight leading-tight">Dashboard Admin</h3>
+                    <h3 className="text-xl font-extrabold text-gray-800 dark:text-white tracking-tight leading-tight">Dashboard Admin</h3>
                     <p className="text-[14px] font-medium text-gray-500">
                         Overview Seleksi Pelamar — <span className="text-indigo-600">{namaBulan} {tahun}</span>
                     </p>
