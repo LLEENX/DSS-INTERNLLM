@@ -7,14 +7,20 @@ export default function TopNavApplicantLayout({ children }) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     
     // State untuk Mode Gelap
-    const [darkMode, setDarkMode] = useState(false);
+    const [darkMode, setDarkMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+        return localStorage.getItem('theme') === 'dark';
+    }
+        return false;
+    });
 
-    // Efek sederhana untuk mode gelap (butuh konfigurasi Tailwind dark:class nantinya)
     useEffect(() => {
         if (darkMode) {
             document.documentElement.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
         } else {
             document.documentElement.classList.remove('dark');
+            localStorage.setItem('theme', 'light');
         }
     }, [darkMode]);
 
