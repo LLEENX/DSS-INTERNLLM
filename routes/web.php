@@ -34,6 +34,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/manajemen-kriteria', [AdminController::class, 'manajemenKriteria'])->name('admin.manajemen-kriteria');
         // Rute untuk mengeksekusi update
         Route::put('/manajemen-kriteria/update', [AdminController::class, 'updateKriteria'])->name('admin.manajemen-kriteria.update');
+        // Rute untuk mengecek file export PDF
+        Route::get('/hasil-seleksi/export-pdf', [AdminController::class, 'exportPDF'])->name('admin.export-pdf');
     });
 
     // Route untuk pelamar

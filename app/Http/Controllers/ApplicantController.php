@@ -46,6 +46,12 @@ class ApplicantController extends Controller
 
     public function submitApplication(Request $request)
     {
+        $sudahMelamar = DB::table('pelamar')->where('user_id', Auth::id())->exists();
+    
+        if ($sudahMelamar) {
+            return redirect()->route('applicant.status')->with('error', 'Anda sudah terdaftar di sistem!');
+        }
+        
         // 1. Validasi disesuaikan dengan database baru
         $request->validate([
             'nama_lengkap' => 'required|string|max:255',

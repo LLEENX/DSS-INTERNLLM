@@ -15,6 +15,7 @@ use Laravel\Ai\Promptable;
 use Laravel\Ai\Enums\Lab;
 use Laravel\Ai\Files\Document;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class AdminController extends Controller
 {
@@ -393,6 +394,22 @@ class AdminController extends Controller
         }
 
         return redirect()->back()->with('success', 'Perhitungan SAW berhasil! Cek halaman Hasil Seleksi.');
+    }
+
+    public function exportPDF()
+    {
+        // Mengambil data perangkingan SAW terbaru
+        $laporan = DB::table('hasil_seleksi')
+            ->join('pelamar', 'hasil_seleksi.pelamar_id', '=', 'pelamar.id')
+            ->select('pelamar.nama_lengkap', 'pelamar.nim', 'pelamar.asal_universitas', 'pelamar.prodi', 'hasil_seleksi.nilai_preferensi_v', 'hasil_seleksi.ranking', 'hasil_seleksi.status')
+            ->orderBy('hasil_seleksi.ranking', 'asc')
+            ->get();
+
+        // Merender ke view murni blade khusus cetak cetak
+        $pdf = Pdf::loadView('pdf.laporan_seleksi', compact('laporan'));
+        
+        // Mendownload otomatis saat rute diakses
+        return $pdf->download('Laporan_Hasil_Seleksi_Magang_' . now()->format('Y-m-d') . '.pdf');
     }
 
 }

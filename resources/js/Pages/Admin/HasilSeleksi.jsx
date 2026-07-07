@@ -66,7 +66,18 @@ export default function HasilSeleksi({ hasilSeleksi }) {
                 <div className="flex-1 bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col min-h-0 overflow-hidden">
                     <div className="px-4 py-3 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center shrink-0">
                         <h4 className="text-[10px] font-black text-gray-700 uppercase tracking-widest">Tabel Hasil Proses Seleksi</h4>
-                        <button className="text-[9px] font-bold text-indigo-600 hover:text-indigo-800 uppercase underline">Export Tabel</button>
+                        <a 
+                            href={route('admin.export-pdf')} 
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#0093DD] hover:bg-[#046A9E] text-white text-[9px] font-black uppercase tracking-widest rounded-md shadow-sm transition-all"
+                        >
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                            </svg>
+                            Export PDF
+                        </a>
+                        {/* <button className="text-[9px] font-bold text-indigo-600 hover:text-indigo-800 uppercase underline">Export Tabel</button> */}
                     </div>
                     
                     <div className="overflow-y-auto flex-1 p-0 m-0">
