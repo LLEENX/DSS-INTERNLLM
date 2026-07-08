@@ -32,6 +32,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         
         // Route untuk Manajemen Kriteria
         Route::get('/manajemen-kriteria', [AdminController::class, 'manajemenKriteria'])->name('admin.manajemen-kriteria');
+        Route::post('/admin/manajemen-kriteria/kalkulasi-ahp', [KriteriaController::class, 'kalkulasiAHP'])->name('admin.manajemen-kriteria.kalkulasi-ahp');
         // Rute untuk mengeksekusi update
         Route::put('/manajemen-kriteria/update', [AdminController::class, 'updateKriteria'])->name('admin.manajemen-kriteria.update');
         // Rute untuk mengecek file export PDF

@@ -65,6 +65,24 @@ export default function ManajemenKriteria({ kriteriaData }) {
         setData('items', newItems);
     };
 
+    const hitungAHP = () => {
+        setIsCalculating(true);
+        
+        // Menggunakan post dari useForm Inertia atau router.post
+        router.post(route('admin.manajemen-kriteria.kalkulasi-ahp'), ahpForm, {
+            onSuccess: () => {
+                setIsCalculating(false);
+                setIsAhpModalOpen(false);
+            },
+            onError: (errors) => {
+                setIsCalculating(false);
+                if(errors.ahp_error) {
+                    alert(errors.ahp_error); // Akan memunculkan alert jika CR > 0.1
+                }
+            }
+        });
+    };
+
     const submitConfig = (e) => {
         e.preventDefault();
         if (!isTotalValid) {
@@ -343,7 +361,7 @@ export default function ManajemenKriteria({ kriteriaData }) {
                                 Batal
                             </button>
                             <button 
-                                onClick={() => console.log('Data yang dikirim ke Laravel:', ahpForm)} 
+                                onClick={() => hitungAHP()} 
                                 disabled={isCalculating}
                                 className="px-5 py-2 bg-[#00A95C] hover:bg-[#008c4c] text-white text-[11px] font-black uppercase tracking-widest rounded-lg transition-all shadow-sm disabled:opacity-50 flex items-center gap-2"
                             >
