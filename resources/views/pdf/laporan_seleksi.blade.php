@@ -84,11 +84,11 @@
         <tbody>
             @foreach($laporan as $data)
                 <tr>
-                    <td class="text-center">{{ $data->rangking }}</td>
+                    <td class="text-center">{{ $data->ranking }}</td>
                     <td>{{ $data->nama_lengkap }}</td>
                     <td>{{ $data->nim }}</td>
                     <td>{{ $data->asal_universitas }}</td>
-                    <td class="text-center">{{ round($data->nilai_preferensi_v, 4) }}</td>
+                    <td class="text-center">{{ round($data->nilai_preferensi_v * 100, 4) }}</td>
                     <td class="text-center">
                         <span class="{{ $data->status === 'Lulus' ? 'status-lulus' : 'status-gagal' }}">
                             {{ $data->status }}

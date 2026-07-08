@@ -241,7 +241,7 @@ class AdminController extends Controller
         }
 
         // ========================================================
-        // LOGIKA 2: JIKA TIPE = PROPOSAL (Arahkan ke GEMINI SDK)
+        // LOGIC 2: JIKA TIPE = PROPOSAL (Arahkan ke GEMINI SDK)
         // ========================================================
         if ($type == 'proposal') {
             try {
@@ -250,18 +250,43 @@ class AdminController extends Controller
 
                     public function instructions(): string
                     {
-                        return 'Berperanlah sebagai Seorang penilai peserta magang pada Badan Pusat Statistik yang sangat profesional. Baca dokumen proposal penelitian ini. 
-                        Berikan penilaian skala 1, 3, dan 5 berdasarkan orisinalitas dan kelayakan. Kategori yang digunakan untuk penilaian adalah kejelasan dan ketepatan rencana kegiatan yang dilakukan selama magang di tempat magang. Beri penilaian seketat mungkin dan dengan kategori penilaian yang sesuai.
-                        Dimana dengan penilaian tempat magang, pekerjaan atau project yang akan dilakukan peserta magang harus jelas dan sesuai dengan tujuan magang dan tentunya sesuai dengan di BPS.
-                        Seperti:
-                        1. Ahli dalam bidang Teknologi dan Teknologi Informasi
-                        2. Dapat menganalisis pada bidang Statistik dan Analisis Data
-                        3. Dapat membantu mendesain konten dan juga editing publikasi. 
-                        Berikan penilaian yang objektif dan profesional.
-                        Deskripsikan secara singkat alasan penilaian yang diberikan. Lalu buatkan ringkasan singkat dalam maksimal 500 kalimat.';
+                        return 'Berperanlah sebagai Seorang penilai peserta magang pada Badan Pusat Statistik
+                        yang profesional, objektif, dan berpengalaman dalam mengevaluasi rencana kegiatan magang.
+                        Tugas Anda adalah membaca dokumen proposal penelitian atau proposal magang yang diberikan,
+                        kemudian memberikan penilaian berdasarkan kejelasan, ketepatan,
+                        dan kesesuaian rencana kegiatan magang dengan tugas serta fungsi BPS.
+                        Skala dan Kriteria penilaian:
+                        1 = Kurang Baik
+                         - Rencana kegiatan tidak terlalu jelas.
+                         - Tujuan magang tidak dijelaskan dengan baik.
+                         - Aktivitas yang direncanakan kurang relevan dengan tugas dan fungsi BPS.
+                         - Tidak menunjukkan kontribusi yang terencana yang dapat dilakukan peserta selama magang.
+                        3 = Cukup Baik
+                         - Rencana kegiatan cukup jelas.
+                         - Tujuan magang telah dijelaskan namun masih perlu penyempurnaan.
+                         - Aktivitas yang direncanakan cukup sesuai dengan tugas dan fungsi BPS.
+                         - Masih terdapat beberapa bagian yang kurang spesifik atau kurang rinci.
+                        5 = Sangat Baik
+                         - Rencana kegiatan disusun secara jelas, rinci, dan realistis.
+                         - Tujuan magang sesuai dengan kompetensi yang ingin dicapai.
+                         - Aktivitas yang direncanakan relevan dengan tugas dan fungsi BPS.
+                         - Menunjukkan pemahaman terhadap pekerjaan yang akan dilakukan selama magang serta memberikan kontribusi yang nyata.
+                        Beri penilaian yang objektif dan profesional berdasarkan kriteria yang telah ditentukan.
+                        Dimana dengan penilaian tempat magang, pekerjaan atau project yang akan dilakukan peserta magang harus jelas
+                        dan sesuai dengan tujuan magang dan tentunya sesuai dengan di BPS.
+                        Acuan Kesesuaian dengan BPS
+                        Dalam memberikan penilaian, pertimbangkan apakah rencana kegiatan magang
+                        berkaitan dengan satu atau lebih bidang berikut:
+                        1. Teknologi, Teknologi Informasi, dan Pengembangan Sistem
+                        2. Statistik, pengumpulan data, pengolahan data, analisis data, atau visualisasi data.
+                        3. Desain grafis, publikasi, dokumentasi, dan pengelolaan media informasi.
+                        4. Administrasi, pengarsipan, serta pengelolaan dokumen.
+                        5. Bidang lain yang masih relevan dengan tugas dan fungsi Badan Pusat Statistik.
+                        Berikan keluaran nilai skalanya beserta ringkasan singkat alasan dari dokumen proposal yang dinilai.
+                        Lalu buatkan ringkasan singkat dalam maksimal 300 kalimat.';
                     }
 
-                    // Definisi struktur JSON yang HARUS dikembalikan oleh Gemini
+                    // Struktur return JSON yang dikembalikan
                     public function schema(JsonSchema $schema): array
                     {
                         return [
@@ -281,7 +306,7 @@ class AdminController extends Controller
                     ]
                 );
 
-                // Simpan ke database (Laravel AI otomatis mengubah response menjadi Array)
+                // Simpan ke database
                 DB::table('hasil_ekstraksi')->updateOrInsert(
                     ['pelamar_id' => $pelamarId],
                     [

@@ -17,6 +17,9 @@ export default function ManajemenKriteria({ kriteriaData }) {
         setData('items', kriteriaData);
         setIsEditModalOpen(true);
     };
+
+    const [isAhpModalOpen, setIsAhpModalOpen] = useState(false);
+    const [isCalculating, setIsCalculating] = useState(false);
     
     const closeModal = () => setIsEditModalOpen(false);
 
@@ -50,6 +53,31 @@ export default function ManajemenKriteria({ kriteriaData }) {
                     <p className="text-[11px] font-medium text-gray-500">
                         Mengonfigurasi kriteria, atribut Cost/Benefit, dan nilai bobot AHP.
                     </p>
+                </div>
+
+                {/* AREA TOMBOL KALKULATOR AHP */}
+                <div className="shrink-0 bg-white dark:bg-[#1E293B] p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-between mb-6 transition-colors duration-200">
+                    <div>
+                        <h4 className="text-xs font-bold text-gray-700 dark:text-white uppercase tracking-wider">
+                            Kalkulator Matriks AHP
+                        </h4>
+                        <p className="text-[10px] text-gray-500 dark:text-gray-400 mt-1">
+                            Gunakan kalkulator sistem untuk menghitung bobot prioritas (W) dan uji konsistensi (CR) secara otomatis.
+                        </p>
+                    </div>
+                    
+                    <div className="flex gap-2">
+                        {/* Tombol Hitung AHP */}
+                        <button 
+                            onClick={() => setIsAhpModalOpen(true)}
+                            className="px-5 py-2 text-white text-[10px] font-bold uppercase tracking-widest rounded-lg transition-all shadow-md flex items-center gap-2 bg-[#0093DD] hover:bg-[#046A9E] shadow-blue-200 dark:shadow-none"
+                        >
+                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                            </svg>
+                            Hitung via AHP
+                        </button>
+                    </div>
                 </div>
 
                 {/* KONTEN UTAMA: TABEL KRITERIA */}
