@@ -18,8 +18,44 @@ export default function ManajemenKriteria({ kriteriaData }) {
         setIsEditModalOpen(true);
     };
 
+    // State untuk modal AHP
     const [isAhpModalOpen, setIsAhpModalOpen] = useState(false);
     const [isCalculating, setIsCalculating] = useState(false);
+    const [showAhpHelp, setShowAhpHelp] = useState(false);
+
+    // State untuk menyimpan 10 nilai perbandingan AHP
+    const [ahpForm, setAhpForm] = useState({
+        c1_c2: { winner: 'c1', scale: 1 },
+        c1_c3: { winner: 'c1', scale: 1 },
+        c1_c4: { winner: 'c1', scale: 1 },
+        c1_c5: { winner: 'c1', scale: 1 },
+        c2_c3: { winner: 'c2', scale: 1 },
+        c2_c4: { winner: 'c2', scale: 1 },
+        c2_c5: { winner: 'c2', scale: 1 },
+        c3_c4: { winner: 'c3', scale: 1 },
+        c3_c5: { winner: 'c3', scale: 1 },
+        c4_c5: { winner: 'c4', scale: 1 },
+    });
+
+    const scaleOptions = [
+        { label: '9', winnerSide: 'A', scale: 9 },
+        { label: '7', winnerSide: 'A', scale: 7 },
+        { label: '5', winnerSide: 'A', scale: 5 },
+        { label: '3', winnerSide: 'A', scale: 3 },
+        { label: '1', winnerSide: 'A', scale: 1 },
+        { label: '3', winnerSide: 'B', scale: 3 },
+        { label: '5', winnerSide: 'B', scale: 5 },
+        { label: '7', winnerSide: 'B', scale: 7 },
+        { label: '9', winnerSide: 'B', scale: 9 },
+    ];
+
+    // Fungsi untuk menangani klik radio button
+    const handleAhpRadioChange = (pairId, winnerVal, scaleVal) => {
+        setAhpForm({
+            ...ahpForm,
+            [pairId]: { winner: winnerVal, scale: scaleVal }
+        });
+    };
     
     const closeModal = () => setIsEditModalOpen(false);
 
@@ -70,7 +106,7 @@ export default function ManajemenKriteria({ kriteriaData }) {
                         {/* Tombol Hitung AHP */}
                         <button 
                             onClick={() => setIsAhpModalOpen(true)}
-                            className="px-5 py-2 text-white text-[10px] font-bold uppercase tracking-widest rounded-lg transition-all shadow-md flex items-center gap-2 bg-[#0093DD] hover:bg-[#046A9E] shadow-blue-200 dark:shadow-none"
+                            className="px-5 py-2 text-white text-[10px] font-bold uppercase tracking-widest rounded-lg transition-all shadow-md flex items-center gap-2 bg-[#00A95C] hover:bg-[#2eb77a] shadow-green-200 dark:shadow-none"
                         >
                             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
@@ -204,6 +240,133 @@ export default function ManajemenKriteria({ kriteriaData }) {
                     </div>
                 </div>
             )}
+
+            {/* MODAL KALKULATOR AHP */}
+            {isAhpModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm">
+                    <div className="bg-white dark:bg-[#1E293B] rounded-2xl shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col transition-colors duration-200">
+                        
+                        {/* HEADER MODAL */}
+                        <div className="px-5 py-3 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 flex justify-between items-center shrink-0">
+                            <div>
+                                <h3 className="text-sm font-black text-gray-800 dark:text-white uppercase tracking-wider">Kalkulator AHP</h3>
+                                <p className="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">Tentukan tingkat kepentingan antar pasangan kriteria.</p>
+                            </div>
+                            <button onClick={() => setIsAhpModalOpen(false)} className="text-gray-400 hover:text-red-500 bg-white dark:bg-gray-800 rounded-full p-1 shadow-sm border border-gray-200 dark:border-gray-600 transition-colors">
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                            </button>
+                        </div>
+
+                        {/* BODY MODAL */}
+                        <div className="p-4 w-full">
+                            
+                            {/* Tombol Panduan (Kanan Atas Tabel) */}
+                            <div className="flex justify-end mb-2">
+                                <button 
+                                    onClick={() => setShowAhpHelp(!showAhpHelp)}
+                                    className="flex items-center gap-1.5 text-[10px] font-bold text-[#0093DD] bg-blue-50 hover:bg-blue-100 dark:bg-[#0093DD]/20 dark:hover:bg-[#0093DD]/30 px-3 py-1.5 rounded-lg transition-colors"
+                                >
+                                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    {showAhpHelp ? 'Tutup Panduan' : 'Cara Pengisian'}
+                                </button>
+                            </div>
+
+                            {/* Kotak Catatan Pengisian (Muncul jika diklik) */}
+                            {showAhpHelp && (
+                                <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/30 border border-blue-100 dark:border-blue-800 rounded-xl text-xs text-blue-800 dark:text-blue-300 leading-relaxed">
+                                    <strong className="font-black">Catatan Pengisian:</strong><br />
+                                    Klik kotak angka di sebelah <strong>Kiri</strong> jika <em>Kriteria A</em> lebih penting. Klik kotak di sebelah <strong>Kanan</strong> jika <em>Kriteria B</em> lebih penting. Pilih angka <strong>1 (Tengah)</strong> jika kedua kriteria dirasa sama pentingnya.
+                                </div>
+                            )}
+
+                            {/* Tabel Matriks */}
+                            <div className="rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+                                <table className="w-full text-center border-collapse bg-white dark:bg-[#1E293B]">
+                                    <thead>
+                                        <tr className="bg-[#0093DD] text-white text-[10px] uppercase tracking-wider">
+                                            <th className="py-2.5 px-3 font-bold border-r border-blue-500/30 w-1/4">Kriteria A</th>
+                                            <th className="py-2.5 px-0 font-medium w-[6%]">9</th>
+                                            <th className="py-2.5 px-0 font-medium w-[6%]">7</th>
+                                            <th className="py-2.5 px-0 font-medium w-[6%]">5</th>
+                                            <th className="py-2.5 px-0 font-medium w-[6%]">3</th>
+                                            <th className="py-2.5 px-0 font-bold bg-blue-600/50 w-[6%]">1</th>
+                                            <th className="py-2.5 px-0 font-medium w-[6%]">3</th>
+                                            <th className="py-2.5 px-0 font-medium w-[6%]">5</th>
+                                            <th className="py-2.5 px-0 font-medium w-[6%]">7</th>
+                                            <th className="py-2.5 px-0 font-medium border-r border-blue-500/30 w-[6%]">9</th>
+                                            <th className="py-2.5 px-3 font-bold w-1/4">Kriteria B</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {[
+                                            { id: 'c1_c2', labelA: 'IPK', valA: 'c1', labelB: 'Semester', valB: 'c2' },
+                                            { id: 'c1_c3', labelA: 'IPK', valA: 'c1', labelB: 'Jurusan', valB: 'c3' },
+                                            { id: 'c1_c4', labelA: 'IPK', valA: 'c1', labelB: 'Skill', valB: 'c4' },
+                                            { id: 'c1_c5', labelA: 'IPK', valA: 'c1', labelB: 'Proposal', valB: 'c5' },
+                                            { id: 'c2_c3', labelA: 'Semester', valA: 'c2', labelB: 'Jurusan', valB: 'c3' },
+                                            { id: 'c2_c4', labelA: 'Semester', valA: 'c2', labelB: 'Skill', valB: 'c4' },
+                                            { id: 'c2_c5', labelA: 'Semester', valA: 'c2', labelB: 'Proposal', valB: 'c5' },
+                                            { id: 'c3_c4', labelA: 'Jurusan', valA: 'c3', labelB: 'Skill', valB: 'c4' },
+                                            { id: 'c3_c5', labelA: 'Jurusan', valA: 'c3', labelB: 'Proposal', valB: 'c5' },
+                                            { id: 'c4_c5', labelA: 'Skill', valA: 'c4', labelB: 'Proposal', valB: 'c5' },
+                                        ].map((pair, idx) => (
+                                            <tr key={pair.id} className="border-b border-gray-100 dark:border-gray-700 hover:bg-blue-50/40 dark:hover:bg-[#0F172A] transition-colors">
+                                                
+                                                <td className="py-1.5 px-3 text-[11px] font-bold text-gray-700 dark:text-gray-300 text-left border-r border-gray-100 dark:border-gray-700">
+                                                    {pair.labelA}
+                                                </td>
+
+                                                {/* Looping 9 Radio Button dengan Seluruh Area Kotak yang Bisa Diklik */}
+                                                {scaleOptions.map((opt, i) => {
+                                                    const isChecked = ahpForm[pair.id].scale === opt.scale && 
+                                                                    (opt.scale === 1 ? true : ahpForm[pair.id].winner === (opt.winnerSide === 'A' ? pair.valA : pair.valB));
+                                                    
+                                                    return (
+                                                        <td key={i} className={`p-0 align-middle ${opt.scale === 1 ? 'bg-gray-50 dark:bg-gray-800/40' : ''}`}>
+                                                            {/* Pembungkus <label> agar klik di mana saja dalam sel tetap terpilih */}
+                                                            <label className="flex items-center justify-center w-full h-full py-2 cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors">
+                                                                <input
+                                                                    type="radio"
+                                                                    name={`radio_${pair.id}`}
+                                                                    checked={isChecked}
+                                                                    onChange={() => handleAhpRadioChange(pair.id, opt.winnerSide === 'A' ? pair.valA : pair.valB, opt.scale)}
+                                                                    className="w-3.5 h-3.5 text-[#0093DD] bg-white dark:bg-[#1E293B] border-gray-300 dark:border-gray-600 focus:ring-[#0093DD] cursor-pointer m-0 block"
+                                                                />
+                                                            </label>
+                                                        </td>
+                                                    );
+                                                })}
+
+                                                <td className="py-1.5 px-3 text-[11px] font-bold text-gray-700 dark:text-gray-300 text-right border-l border-gray-100 dark:border-gray-700">
+                                                    {pair.labelB}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        {/* FOOTER MODAL */}
+                        <div className="px-5 py-3 border-t border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 flex justify-end gap-3 shrink-0">
+                            <button 
+                                onClick={() => setIsAhpModalOpen(false)}
+                                className="px-4 py-2 text-xs font-bold text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors uppercase tracking-widest"
+                            >
+                                Batal
+                            </button>
+                            <button 
+                                onClick={() => console.log('Data yang dikirim ke Laravel:', ahpForm)} 
+                                disabled={isCalculating}
+                                className="px-5 py-2 bg-[#00A95C] hover:bg-[#008c4c] text-white text-[11px] font-black uppercase tracking-widest rounded-lg transition-all shadow-sm disabled:opacity-50 flex items-center gap-2"
+                            >
+                                {isCalculating ? 'Menghitung...' : 'Kalkulasi Matriks & Simpan'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
         </DashboardAdminLayout>
     );
 }
