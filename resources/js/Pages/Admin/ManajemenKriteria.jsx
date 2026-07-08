@@ -247,10 +247,10 @@ export default function ManajemenKriteria({ kriteriaData }) {
                     <div className="bg-white dark:bg-[#1E293B] rounded-2xl shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col transition-colors duration-200">
                         
                         {/* HEADER MODAL */}
-                        <div className="px-5 py-3 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 flex justify-between items-center shrink-0">
+                        <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 flex justify-between items-center shrink-0">
                             <div>
-                                <h3 className="text-sm font-black text-gray-800 dark:text-white uppercase tracking-wider">Kalkulator AHP</h3>
-                                <p className="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">Tentukan tingkat kepentingan antar pasangan kriteria.</p>
+                                <h3 className="text-[16px] font-black text-gray dark:text-white uppercase tracking-wider">Kalkulator AHP</h3>
+                                <p className="text-[12px] text-gray-500 font-black dark:text-gray-400 mt-0.5">Tentukan tingkat kepentingan antar pasangan kriteria.</p>
                             </div>
                             <button onClick={() => setIsAhpModalOpen(false)} className="text-gray-400 hover:text-red-500 bg-white dark:bg-gray-800 rounded-full p-1 shadow-sm border border-gray-200 dark:border-gray-600 transition-colors">
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
@@ -258,29 +258,17 @@ export default function ManajemenKriteria({ kriteriaData }) {
                         </div>
 
                         {/* BODY MODAL */}
-                        <div className="p-4 w-full">
-                            
-                            {/* Tombol Panduan (Kanan Atas Tabel) */}
-                            <div className="flex justify-end mb-2">
-                                <button 
-                                    onClick={() => setShowAhpHelp(!showAhpHelp)}
-                                    className="flex items-center gap-1.5 text-[10px] font-bold text-[#0093DD] bg-blue-50 hover:bg-blue-100 dark:bg-[#0093DD]/20 dark:hover:bg-[#0093DD]/30 px-3 py-1.5 rounded-lg transition-colors"
-                                >
-                                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                    {showAhpHelp ? 'Tutup Panduan' : 'Cara Pengisian'}
-                                </button>
-                            </div>
-
-                            {/* Kotak Catatan Pengisian (Muncul jika diklik) */}
-                            {showAhpHelp && (
-                                <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/30 border border-blue-100 dark:border-blue-800 rounded-xl text-xs text-blue-800 dark:text-blue-300 leading-relaxed">
-                                    <strong className="font-black">Catatan Pengisian:</strong><br />
+                        <div className="px-4 w-full">
+                            <div className="mb-4 p-3 bg-blue-50/80 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800/50 rounded-xl text-xs text-black-800 dark:text-white-300 leading-relaxed flex gap-3 items-start">
+                                <svg className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                <div>
+                                    <strong className="font-black">Panduan Pengisian:</strong><br />
                                     Klik kotak angka di sebelah <strong>Kiri</strong> jika <em>Kriteria A</em> lebih penting. Klik kotak di sebelah <strong>Kanan</strong> jika <em>Kriteria B</em> lebih penting. Pilih angka <strong>1 (Tengah)</strong> jika kedua kriteria dirasa sama pentingnya.
                                 </div>
-                            )}
+                            </div>
 
                             {/* Tabel Matriks */}
-                            <div className="rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+                            <div className="rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm">
                                 <table className="w-full text-center border-collapse bg-white dark:bg-[#1E293B]">
                                     <thead>
                                         <tr className="bg-[#0093DD] text-white text-[10px] uppercase tracking-wider">
@@ -323,7 +311,6 @@ export default function ManajemenKriteria({ kriteriaData }) {
                                                     
                                                     return (
                                                         <td key={i} className={`p-0 align-middle ${opt.scale === 1 ? 'bg-gray-50 dark:bg-gray-800/40' : ''}`}>
-                                                            {/* Pembungkus <label> agar klik di mana saja dalam sel tetap terpilih */}
                                                             <label className="flex items-center justify-center w-full h-full py-2 cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors">
                                                                 <input
                                                                     type="radio"
