@@ -270,7 +270,7 @@ class AdminController extends Controller
                          - Rencana kegiatan disusun secara jelas, rinci, dan realistis.
                          - Tujuan magang sesuai dengan kompetensi yang ingin dicapai.
                          - Aktivitas yang direncanakan relevan dengan tugas dan fungsi BPS.
-                         - Menunjukkan pemahaman terhadap pekerjaan yang akan dilakukan selama magang serta memberikan kontribusi yang nyata.
+                         - Menunjukkan pemahaman dan rencana terhadap pekerjaan yang akan dilakukan selama magang.
                         Beri penilaian yang objektif dan profesional berdasarkan kriteria yang telah ditentukan.
                         Dimana dengan penilaian tempat magang, pekerjaan atau project yang akan dilakukan peserta magang harus jelas
                         dan sesuai dengan tujuan magang dan tentunya sesuai dengan di BPS.
@@ -298,7 +298,7 @@ class AdminController extends Controller
 
                 // Prompting Agen & Melampirkan File PDF
                 $response = $agent->prompt(
-                    'Tolong analisis dan nilai dokumen proposal yang saya lampirkan ini sesuai instruksimu.',
+                    'Tolong analisis dan nilai dokumen proposal yang saya lampirkan ini sesuai instruksiku.',
                     provider: Lab::Gemini,
                     model: 'gemini-3.5-flash',
                     attachments: [

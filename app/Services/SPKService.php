@@ -37,8 +37,7 @@ class SPKService
 
             foreach ($criteriaKeys as $index => $key) {
                 $val = isset($pelamar[$key]) ? (float) $pelamar[$key] : 0;
-                
-                // Pastikan tipe di-lowercase untuk mencegah error perbandingan string
+            
                 $type = strtolower(trim($criteriaTypes[$index])); 
 
                 // Rumus Normalisasi SAW
@@ -57,12 +56,12 @@ class SPKService
             $results[] = $pelamar;
         }
 
-        // 3. Perangkingan (Urutkan nilai_preferensi_v dari terbesar ke terkecil)
+        // Perangkingan (Urutkan nilai_preferensi_v dari terbesar ke terkecil)
         usort($results, function ($a, $b) {
             return $b['nilai_preferensi_v'] <=> $a['nilai_preferensi_v'];
         });
 
-        // 4. Pemberian Peringkat
+        // Pemberian Peringkat
         foreach ($results as $index => $pelamar) {
             $results[$index]['ranking'] = $index + 1;
         }
