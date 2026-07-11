@@ -282,8 +282,9 @@ class AdminController extends Controller
                         3. Desain grafis, publikasi, dokumentasi, dan pengelolaan media informasi.
                         4. Administrasi, pengarsipan, serta pengelolaan dokumen.
                         5. Bidang lain yang masih relevan dengan tugas dan fungsi Badan Pusat Statistik.
-                        Berikan keluaran nilai skalanya beserta ringkasan singkat alasan dari dokumen proposal yang dinilai.
-                        Lalu buatkan ringkasan singkat dalam maksimal 300 kalimat.';
+                        Berikan keluaran nilai skala penilaiannya beserta ringkasan alasan penilaian
+                        dari dokumen proposal yang dinilai dengan poin-poin singkat yang berisi maksimal 500 kalimat.
+                        Lalu buatkan kesimpulan diakhir.';
                     }
 
                     // Struktur return JSON yang dikembalikan

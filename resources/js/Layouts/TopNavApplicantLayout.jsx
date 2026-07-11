@@ -62,10 +62,6 @@ export default function TopNavApplicantLayout({ children }) {
                         
                         <div className="flex">
                             <div className="shrink-0 flex items-center gap-2 mr-10">
-                                {/* LOGO BARU */}
-                                <svg className="w-10 h-10 text-[#0093DD]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                                </svg>
                                 <h1 className="text-2xl font-black text-gray-800 dark:text-white tracking-tight uppercase">Magang<span className="text-[#0093DD]">BPS</span></h1>
                             </div>
 
