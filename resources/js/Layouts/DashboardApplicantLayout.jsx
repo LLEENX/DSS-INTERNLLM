@@ -3,10 +3,32 @@ import { Link, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import Dropdown from '@/Components/Dropdown';
 import SidebarLayout from '@/Layouts/SidebarLayout';
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function DashboardApplicantLayout({ children }) {
     const user = usePage().props.auth.user;
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+    const { flash = {} } = usePage().props;
+        
+            useEffect(() => {
+                if (flash?.success) {
+                    toast.success(flash.success, {
+                        duration: 4000,
+                        position: 'top-right',
+                        style: {
+                            background: '#10B981',
+                            color: '#fff',
+                        },
+                    });
+                }
+                if (flash?.error) {
+                    toast.error(flash.error, {
+                        duration: 4000,
+                        position: 'top-right',
+                    });
+                }
+            }, [flash]);
 
     const isActive = (routeName) => route().current(routeName);
 
@@ -39,6 +61,7 @@ export default function DashboardApplicantLayout({ children }) {
 
     return (
         <div className="flex h-screen bg-[#f8f9fa] font-sans overflow-hidden">
+            <Toaster />
             <SidebarLayout>
                 <nav className="p-4 space-y-1">
                     {applicantMenus.map((menu, index) => (

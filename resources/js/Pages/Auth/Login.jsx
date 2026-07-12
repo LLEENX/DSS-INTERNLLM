@@ -4,10 +4,65 @@ import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import GuestLayout from '@/Layouts/GuestLayout';
+import { usePage } from '@inertiajs/react';
 import { Head, Link, useForm } from '@inertiajs/react';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function Login({ status, canResetPassword }) {
+    const { flash = {} } = usePage().props;
+
+    useEffect(() => {
+        if (flash?.success) {
+            toast.success(
+                (t) => (
+                    <div className="flex items-center justify-between gap-4 w-full">
+                        <span>{flash.success}</span>
+                        <button 
+                            onClick={() => toast.dismiss(t.id)} 
+                            className="p-1 text-white hover:text-gray-200 transition-colors focus:outline-none"
+                            title="Tutup Notifikasi"
+                        >
+                            {/* Icon Silang (X) menggunakan SVG Tailwind */}
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                ),
+                {
+                    duration: 4000,
+                    position: 'top-right',
+                    style: { background: '#10B981', color: '#fff' },
+                }
+            );
+        }
+
+        if (flash?.error) {
+            toast.error(
+                (t) => (
+                    <div className="flex items-center justify-between gap-4 w-full">
+                        <span>{flash.error}</span>
+                        <button 
+                            onClick={() => toast.dismiss(t.id)} 
+                            className="p-1 text-white hover:text-gray-200 transition-colors focus:outline-none"
+                            title="Tutup Notifikasi"
+                        >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                ),
+                {
+                    duration: 4000,
+                    position: 'top-right',
+                    style: { background: '#EF4444', color: '#fff' }, 
+                }
+            );
+        }
+    }, [flash]);
+
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '',
         password: '',
@@ -26,6 +81,7 @@ export default function Login({ status, canResetPassword }) {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-[#0F172A] p-4 font-sans transition-colors duration-200">
+            <Toaster />
             <Head title="Login - SmartIntern" />
 
             <div className="w-full max-w-md bg-white dark:bg-[#1E293B] rounded-2xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-800">

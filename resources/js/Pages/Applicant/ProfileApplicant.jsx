@@ -1,6 +1,7 @@
 import React from 'react';
 import { Head, useForm, usePage } from '@inertiajs/react';
 import TopNavApplicantLayout from '@/Layouts/TopNavApplicantLayout';
+import toast from 'react-hot-toast';
 
 export default function Profil({ hasApplied }) {
     const user = usePage().props.auth.user;
@@ -19,10 +20,17 @@ export default function Profil({ hasApplied }) {
     const submit = (e) => {
         e.preventDefault();
         post(route('applicant.submit'), {
+            preserveScroll: true,
             forceFormData: true,
-            onError: (errors) => {
-                console.log("Validation Errors dari Laravel:", errors);
-                alert("Gagal! Cek pesan merah di atas form atau buka Inspect Element.");
+            onError: (err) => {
+                toast.error('Gagal menyimpan! Periksa kembali kolom yang kosong atau salah (berwarna merah).', {
+                    duration: 5000,
+                    position: 'top-right',
+                    style: {
+                        background: '#EF4444',
+                        color: '#fff',
+                    },
+                });
             }
         });
     };
@@ -62,7 +70,7 @@ export default function Profil({ hasApplied }) {
                     </div>
                 )}
 
-                <form onSubmit={submit} className="space-y-4">
+                <form onSubmit={submit} className="space-y-4" noValidate>
                     {/* BAGIAN A: DATA AKADEMIK */}
                     <div className="bg-white dark:bg-[#1E293B] rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors duration-200">
                         <div className="bg-gray-50/50 dark:bg-[#0F172A] px-6 py-4 border-b border-gray-100 dark:border-gray-700">
@@ -72,6 +80,7 @@ export default function Profil({ hasApplied }) {
                             <div className="space-y-1">
                                 <label className="text-[11px] font-bold text-gray-600 dark:text-gray-300 uppercase">Nama Lengkap</label>
                                 <input type="text" value={data.nama_lengkap} onChange={e => setData('nama_lengkap', e.target.value)} className="w-full text-xs bg-white dark:bg-[#0F172A] border-gray-200 dark:border-gray-600 dark:text-white rounded-lg focus:border-[#0093DD] dark:focus:border-[#0093DD] dark:focus:ring-[#0093DD]" required />
+                                {errors.nama_lengkap && <p className="text-[10px] text-red-500 dark:text-red-400">{errors.nama_lengkap}</p>}
                             </div>
                             <div className="space-y-1">
                                 <label className="text-[11px] font-bold text-gray-600 dark:text-gray-300 uppercase">NIM</label>
@@ -81,10 +90,12 @@ export default function Profil({ hasApplied }) {
                             <div className="space-y-1">
                                 <label className="text-[11px] font-bold text-gray-600 dark:text-gray-300 uppercase">Universitas</label>
                                 <input type="text" value={data.asal_universitas} onChange={e => setData('asal_universitas', e.target.value)} className="w-full text-xs bg-white dark:bg-[#0F172A] border-gray-200 dark:border-gray-600 dark:text-white rounded-lg focus:border-[#0093DD] dark:focus:border-[#0093DD] dark:focus:ring-[#0093DD]" required />
+                                {errors.asal_universitas && <p className="text-[10px] text-red-500 dark:text-red-400">{errors.asal_universitas}</p>}
                             </div>
                             <div className="space-y-1">
                                 <label className="text-[11px] font-bold text-gray-600 dark:text-gray-300 uppercase">Program Studi</label>
                                 <input type="text" value={data.prodi} onChange={e => setData('prodi', e.target.value)} className="w-full text-xs bg-white dark:bg-[#0F172A] border-gray-200 dark:border-gray-600 dark:text-white rounded-lg focus:border-[#0093DD] dark:focus:border-[#0093DD] dark:focus:ring-[#0093DD]" required />
+                                {errors.prodi && <p className="text-[10px] text-red-500 dark:text-red-400">{errors.prodi}</p>}
                             </div>
                             <div className="space-y-1">
                                 <label className="text-[11px] font-bold text-gray-600 dark:text-gray-300 uppercase">Jenjang</label>
@@ -93,10 +104,12 @@ export default function Profil({ hasApplied }) {
                                     <option value="D4">D4</option>
                                     <option value="S1">S1</option>
                                 </select>
+                                {errors.jenjang && <p className="text-[10px] text-red-500 dark:text-red-400">{errors.jenjang}</p>}
                             </div>
                             <div className="space-y-1">
                                 <label className="text-[11px] font-bold text-gray-600 dark:text-gray-300 uppercase">Semester</label>
                                 <input type="number" value={data.semester} onChange={e => setData('semester', e.target.value)} className="w-full text-xs bg-white dark:bg-[#0F172A] border-gray-200 dark:border-gray-600 dark:text-white rounded-lg focus:border-[#0093DD] dark:focus:border-[#0093DD] dark:focus:ring-[#0093DD]" required />
+                                {errors.semester && <p className="text-[10px] text-red-500 dark:text-red-400">{errors.semester}</p>}
                             </div>
                         </div>
                     </div>

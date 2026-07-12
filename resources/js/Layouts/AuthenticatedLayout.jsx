@@ -1,8 +1,64 @@
 import { Link, usePage } from '@inertiajs/react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Dropdown from '@/Components/Dropdown';
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function AuthenticatedLayout({ header, children }) {
+
+    const { flash = {} } = usePage().props;
+
+    useEffect(() => {
+        if (flash?.success) {
+            toast.success(
+                (t) => (
+                    <div className="flex items-center justify-between gap-4 w-full">
+                        <span>{flash.success}</span>
+                        <button 
+                            onClick={() => toast.dismiss(t.id)} 
+                            className="p-1 text-white hover:text-gray-200 transition-colors focus:outline-none"
+                            title="Tutup Notifikasi"
+                        >
+                            {/* Icon Silang (X) menggunakan SVG Tailwind */}
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                ),
+                {
+                    duration: 4000,
+                    position: 'top-right',
+                    style: { background: '#10B981', color: '#fff' },
+                }
+            );
+        }
+
+        if (flash?.error) {
+            toast.error(
+                (t) => (
+                    <div className="flex items-center justify-between gap-4 w-full">
+                        <span>{flash.error}</span>
+                        <button 
+                            onClick={() => toast.dismiss(t.id)} 
+                            className="p-1 text-white hover:text-gray-200 transition-colors focus:outline-none"
+                            title="Tutup Notifikasi"
+                        >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                ),
+                {
+                    duration: 4000,
+                    position: 'top-right',
+                    style: { background: '#EF4444', color: '#fff' }, 
+                }
+            );
+        }
+    }, [flash]);
+    
+
     const user = usePage().props.auth.user;
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -13,6 +69,7 @@ export default function AuthenticatedLayout({ header, children }) {
 
     return (
         <div className="flex h-screen bg-[#f8f9fa] font-sans overflow-hidden">
+            <Toaster />
             
             {/* SIDEBAR (Light Corporate Theme) */}
             <aside className="w-60 bg-white border-r border-gray-200 flex flex-col justify-between z-20 hidden md:flex">

@@ -105,7 +105,7 @@ class AdminController extends Controller
             DB::table('users')->where('id', $pelamar->user_id)->delete();
         }
 
-        return redirect()->back();
+        return redirect()->back()->with('success', 'Data pelamar berhasil dihapus secara permanen.');;
     }
 
     public function editPelamar(Request $request, $id)
@@ -145,7 +145,7 @@ class AdminController extends Controller
             );
         }
 
-        return redirect()->back();
+        return redirect()->back()->with('success', 'Data pelamar berhasil diperbarui!');;
     }
 
 
@@ -160,7 +160,7 @@ class AdminController extends Controller
         ]);
     }
 
-    // Fungsi untuk menyimpan perubahan masal (Array) dari Modal
+    // Fungsi untuk menyimpan perubahan dari Modal
     public function updateKriteria(Request $request)
     {
         foreach ($request->items as $item) {
@@ -297,6 +297,8 @@ class AdminController extends Controller
                     }
                 };
 
+                $startTime = microtime(true);
+
                 // Prompting Agen & Melampirkan File PDF
                 $response = $agent->prompt(
                     'Tolong analisis dan nilai dokumen proposal yang saya lampirkan ini sesuai instruksiku.',
@@ -306,6 +308,12 @@ class AdminController extends Controller
                         Document::fromPath($filePath)
                     ]
                 );
+
+                $endTime = microtime(true);
+                $waktuRespon = round($endTime - $startTime, 2);
+
+                $skorAkhir = $response['skor_proposal'] ?? 1;
+                \Illuminate\Support\Facades\Log::info("Uji Gemini | Skor: {$skorAkhir} | Waktu: {$waktuRespon} detik");
 
                 // Simpan ke database
                 DB::table('hasil_ekstraksi')->updateOrInsert(
@@ -319,7 +327,7 @@ class AdminController extends Controller
                     ]
                 );
 
-                return redirect()->back()->with('success', 'Proposal Berhasil Dinilai oleh Gemini');
+                return redirect()->back()->with('success', 'Proposal Berhasil Dinilai');
 
             } catch (\Exception $e) {
                 dd([
@@ -328,7 +336,6 @@ class AdminController extends Controller
                     'baris_error' => $e->getLine(),
                     'file_error'  => $e->getFile()
                 ]);
-                
                 // return redirect()->back()->with('error', 'Gagal... ');
             }
         }
@@ -360,7 +367,7 @@ class AdminController extends Controller
         // ==========================================
         // 1. AMBIL BOBOT & TIPE KRITERIA DARI DATABASE
         // ==========================================
-        // Asumsi tabelmu bernama 'kriteria' dan berurutan dari C1 sampai C5
+
         $kriteria = DB::table('kriteria')->orderBy('kode_kriteria', 'asc')->get();
         
         if ($kriteria->count() !== 5) {
@@ -399,7 +406,7 @@ class AdminController extends Controller
         }
 
         // ==========================================
-        // EKSEKUSI SAW & SIMPAN KE DATABASE
+        // EKSEKUSI Metode SAW & SIMPAN KE DATABASE
         // ==========================================
         $hasilSAW = $spkService->calculateSAW($pelamarData, $weights, $criteriaTypes);
 
@@ -419,7 +426,7 @@ class AdminController extends Controller
             );
         }
 
-        return redirect()->back()->with('success', 'Perhitungan SAW berhasil! Cek halaman Hasil Seleksi.');
+        return redirect()->back()->with('success', 'Perhitungan SAW berhasil dijalankan!');
     }
 
     public function exportPDF()
