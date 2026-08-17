@@ -209,7 +209,7 @@ class AdminController extends Controller
         $filePath = public_path('storage/' . ($type == 'cv' ? $pelamar->path_cv : $pelamar->path_proposal));
 
         // ========================================================
-        // LOGIKA 1: JIKA TIPE = CV (Arahkan ke FastAPI Python)
+        // JIKA TIPE = CV (Arahkan ke FastAPI Python)
         // ========================================================
         if ($type == 'cv') {
             try {
@@ -241,7 +241,7 @@ class AdminController extends Controller
         }
 
         // ========================================================
-        // LOGIC 2: JIKA TIPE = PROPOSAL (Arahkan ke GEMINI SDK)
+        // JIKA TIPE = PROPOSAL (Arahkan ke GEMINI SDK)
         // ========================================================
         if ($type == 'proposal') {
             try {
